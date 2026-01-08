@@ -19,6 +19,25 @@ Check out [PR #1](https://github.com/sou-goog/AI-Code-Reviewer/pull/1) to see th
 - 🟢 **Suggestion**: Best practices, optimizations
 - ✅ **Positive**: Good practices worth highlighting
 
+## ✨ What Makes This Special
+
+- 🆓 **100% Free** - No costs for deployment or usage
+- 🎯 **Production-Ready** - Full CI/CD with GitHub Actions
+- 🔧 **Highly Configurable** - Custom rules, ignore patterns, model settings
+- 🌐 **Multiple Interfaces** - CLI, Web Dashboard, GitHub Actions
+- 📊 **Severity Categorization** - Critical, Warning, Suggestion levels
+- 🎨 **Beautiful UI** - Modern, gradient-based web interface
+- 🔒 **Extensible** - Easy to add new models and features
+
+## 📚 Documentation
+
+- [ARCHITECTURE.md](ARCHITECTURE.md) - System design and diagrams
+- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Common issues and fixes
+- [CHANGELOG.md](CHANGELOG.md) - Version history
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines
+- [SECURITY.md](SECURITY.md) - Security policy
+- [EXAMPLE_REVIEW.md](EXAMPLE_REVIEW.md) - Sample output
+
 ## ✨ Features
 
 ### 🔍 Intelligent Code Analysis
