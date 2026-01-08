@@ -19,11 +19,23 @@ Check out [PR #1](https://github.com/sou-goog/AI-Code-Reviewer/pull/1) to see th
 
 ## ✨ Features
 
-- 🔍 **Automated Code Analysis** - Reviews git diffs using AI
-- 🆓 **100% Free** - Uses Google Gemini free tier
-- 🎯 **Multiple Review Modes** - Staged, uncommitted, or last commit
-- 📄 **Flexible Output** - Terminal, Markdown, or JSON
-- ⚡ **Fast & Easy** - Simple CLI interface
+### 🔍 Intelligent Code Analysis
+- **AI-Powered Reviews** - Leverages Google Gemini to analyze code changes
+- **Multi-Level Severity** - Categorizes issues as 🔴 Critical, 🟡 Warning, 🟢 Suggestion, ✅ Positive
+- **Security Focus** - Detects SQL injection, XSS, hardcoded secrets, and more
+- **Performance Insights** - Identifies inefficient algorithms and memory issues
+
+### ⚙️ Flexible Integration
+- **CLI Tool** - Quick reviews from command line
+- **Web Dashboard** - Beautiful Streamlit interface with real-time analysis
+- **GitHub Actions** - Automatic PR reviews with inline comments
+- **Pre-commit Hooks** - Block commits with critical issues
+
+### 🎯 Customization
+- **Custom Rules** - Define your own pattern-based review criteria
+- **Configurable Models** - Switch between Gemini models
+- **Ignore Patterns** - Exclude specific files or directories
+- **Multiple Output Formats** - Terminal, Markdown, or JSON
 
 ## 🚀 Quick Start
 
@@ -152,32 +164,10 @@ Example configuration:
 ## 📦 Tech Stack
 
 - **Python 3.9+**
-- **Google Gemini 2.5 Flash** (AI Model)
+- **Google Generative AI** (Gemini 2.5 Flash - Free Tier)
 - **GitPython** (Git integration)
 - **Typer** (CLI framework)
 - **Rich** (Terminal UI)
-
-## 🗺️ Roadmap
-
-- [x] Basic CLI with staged changes review
-- [x] Multiple diff types support
-- [x] Output format options
-- [x] Severity levels (🔴🟡🟢✅)
-- [x] GitHub Actions integration
-- [x] Pre-commit hooks
-- [x] Configuration file support
-- [x] Custom review rules engine
-- [x] Web dashboard (Streamlit)
-- [ ] Multi-model support (Claude, GPT-4)
-- [ ] Review history database
-- [ ] Team analytics
-- [ ] VS Code extension
-
-## 🤝 Contributing
-
-Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-## 📄 License
 
 MIT License
 
