@@ -28,16 +28,22 @@ Check out [PR #1](https://github.com/sou-goog/AI-Code-Reviewer/pull/1) to see th
 - **Performance Insights** - Identifies inefficient algorithms and memory issues
 
 ### ⚙️ Flexible Integration
-- **CLI Tool** - Quick reviews from command line
-- **Web Dashboard** - Beautiful Streamlit interface with real-time analysis
-- **GitHub Actions** - Automatic PR reviews with inline comments
+- **CLI Tool** - Quick reviews from command line (`init`, `review`, `stats` commands)
+- **Web Dashboard** - Beautiful Streamlit interface with real-time analytics
+- **GitHub Actions** - Automatic PR reviews with **inline comments** on specific lines
 - **Pre-commit Hooks** - Block commits with critical issues
 
 ### 🎯 Customization
-- **Custom Rules** - Define your own pattern-based review criteria
+- **Custom Rules** - Define your own pattern-based review criteria  
+- **Multi-Language** - Python, JavaScript, Java, Go, Rust support
 - **Configurable Models** - Switch between Gemini models
 - **Ignore Patterns** - Exclude specific files or directories
 - **Multiple Output Formats** - Terminal, Markdown, or JSON
+
+### 📊 Analytics & Tracking
+- **Review History** - SQLite database tracks all reviews
+- **Real-time Dashboard** - Live metrics, pie charts, recent reviews
+- **Performance Stats** - Duration tracking, issue counts by severity
 
 ## 🚀 Quick Start
 
@@ -91,6 +97,16 @@ See [EXAMPLE_REVIEW.md](EXAMPLE_REVIEW.md) for sample output.
 
 ## 📖 Usage
 
+### Initialize in Your Project
+```bash
+python -m src.main init
+```
+This will:
+- Verify git repository
+- Check API  key setup
+- Create `.codereview.yaml` config
+- Show next steps
+
 ### Basic Review (Staged Changes)
 ```bash
 python -m src.main review
@@ -115,6 +131,16 @@ python -m src.main review --format markdown
 ```bash
 python -m src.main review --format json
 ```
+
+### View Statistics
+```bash
+python -m src.main stats
+```
+Shows:
+- Total reviews conducted
+- Issues by severity
+- Average review duration
+- Recent review history
 
 ## 🎣 Pre-commit Hooks (Optional)
 
