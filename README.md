@@ -7,6 +7,16 @@
 
 > AI-powered code review tool using Google Gemini. Catch bugs, security issues, and style problems before you commit. **100% Free!**
 
+## 🎬 Demo
+
+Check out [PR #1](https://github.com/sou-goog/AI-Code-Reviewer/pull/1) to see the AI reviewer in action!
+
+**What it catches:**
+- 🔴 **Critical**: Security vulnerabilities, fatal bugs
+- 🟡 **Warning**: Potential issues, code smells  
+- 🟢 **Suggestion**: Best practices, optimizations
+- ✅ **Positive**: Good practices worth highlighting
+
 ## ✨ Features
 
 - 🔍 **Automated Code Analysis** - Reviews git diffs using AI
@@ -67,7 +77,21 @@ python -m src.main review --format markdown
 python -m src.main review --format json
 ```
 
-## � GitHub Actions Deployment
+## 🎣 Pre-commit Hooks (Optional)
+
+Automatically review code before every commit:
+
+```bash
+# Install the hook
+python setup_hooks.py
+
+# Now reviews run automatically on git commit
+# Press 'y' to proceed or 'n' to abort
+```
+
+To uninstall: `rm .git/hooks/pre-commit`
+
+## 🚀 GitHub Actions Deployment
 
 ### Automatic PR Reviews (Free!)
 
@@ -94,6 +118,21 @@ git push -u origin main
 | `--diff-type` | `staged`, `uncommitted`, `last-commit` | `staged` | What changes to review |
 | `--format` | `terminal`, `markdown`, `json` | `terminal` | Output format |
 
+## ⚙️ Configuration
+
+Create `.codereview.yaml` in your repo root to customize behavior:
+
+```bash
+cp .codereview.example.yaml .codereview.yaml
+# Edit to your preferences
+```
+
+Example configuration:
+- Ignore specific file patterns
+- Set severity levels
+- Add custom rules
+- Configure AI model settings
+
 ## 📦 Tech Stack
 
 - **Python 3.9+**
@@ -107,11 +146,19 @@ git push -u origin main
 - [x] Basic CLI with staged changes review
 - [x] Multiple diff types support
 - [x] Output format options
+- [x] Severity levels (🔴🟡🟢✅)
 - [x] GitHub Actions integration
-- [ ] Custom review rules
-- [ ] Pre-commit hooks
-- [ ] Severity levels
+- [x] Pre-commit hooks
+- [x] Configuration file support
+- [ ] Custom review rules engine
+- [ ] Multi-model support (Claude, GPT-4)
 - [ ] Web dashboard
+- [ ] Review history database
+- [ ] Team analytics
+
+## 🤝 Contributing
+
+Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## 📄 License
 

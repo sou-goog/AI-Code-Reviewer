@@ -1,55 +1,57 @@
-# 🚀 Quick Deployment Guide
+# 🚀 Deployment Commands
 
-## For Your Mentor Demo
+## ⚠️ IMPORTANT: Do This First
+1. Go to https://github.com/new
+2. **Sign in** to your GitHub account
+3. Create repository:
+   - Name: `AI-Code-Reviewer`
+   - Description: "AI-powered code review tool using Google Gemini"
+   - Public repository
+   - **DO NOT** check: Initialize with README, .gitignore, or license
+4. Click "Create repository"
 
-### 1. Create GitHub Repo
-```bash
-# On GitHub, create new repo: "AI-Code-Reviewer"
-# DON'T initialize with README (we already have one)
-```
+## Then Run These Commands
 
-### 2. Push Code
-```bash
+```powershell
+# Add GitHub remote (replace YOUR_USERNAME with your GitHub username)
 git remote add origin https://github.com/YOUR_USERNAME/AI-Code-Reviewer.git
+
+# Push code to GitHub
 git branch -M main
 git push -u origin main
 ```
 
-### 3. Add Secret
+## Add API Key Secret
+
 1. Go to: `https://github.com/YOUR_USERNAME/AI-Code-Reviewer/settings/secrets/actions`
 2. Click "New repository secret"
 3. Name: `GEMINI_API_KEY`
 4. Value: `AIzaSyDrdf_bTfsJ57DBsgSWzUXzcL-qfDTFPCk`
-5. Save
+5. Click "Add secret"
 
-### 4. Test It
-```bash
+## Test the Deployment
+
+```powershell
 # Create test branch
-git checkout -b add-feature
+git checkout -b test-ai-review
 
-# Make a change (add a file with a bug)
-echo "def test(): return 1/0" > buggy.py
-git add buggy.py
-git commit -m "Add buggy function"
+# Add a file with intentional bug
+echo "def divide(a, b): return a / b" > test_bug.py
+git add test_bug.py
+git commit -m "Add test function"
 
 # Push and create PR
-git push origin add-feature
+git push origin test-ai-review
 ```
 
-Then go to GitHub and create a Pull Request. Wait 1-2 minutes for the AI review comment!
+Then:
+1. Go to your GitHub repo
+2. Click "Pull requests" → "New pull request"
+3. Select `test-ai-review` branch
+4. Create PR
+5. Wait 1-2 minutes
+6. AI review will appear as a comment! 🎉
 
-## What to Show Your Mentor
+---
 
-✅ **Working CLI tool** - Local code reviews  
-✅ **Multiple output formats** - Terminal, Markdown, JSON  
-✅ **Free deployment** - GitHub Actions (no server needed)  
-✅ **Automatic PR reviews** - No manual intervention  
-✅ **Production-ready docs** - README, setup guide
-
-## Demo Script
-
-1. Show the CLI: `python -m src.main review --help`
-2. Show a local review: `python -m src.main review --format markdown`
-3. Show the GitHub repo with the workflow
-4. Show a Pull Request with AI comments
-5. Discuss the roadmap (severity levels, custom rules, etc.)
+**You're done!** Show this to your mentor.

@@ -1,0 +1,38 @@
+# AI Code Reviewer Configuration
+
+# Review settings
+review:
+  # Severity levels to report (critical, warning, suggestion, all)
+  levels: all
+  
+  # Maximum diff size to review (in KB)
+  max_diff_size: 100
+  
+  # File patterns to ignore (glob format)
+  ignore_patterns:
+    - "**/node_modules/**"
+    - "**/venv/**"
+    - "**/__pycache__/**"
+    - "*.min.js"
+    - "*.min.css"
+    - "package-lock.json"
+    - "yarn.lock"
+  
+  # File patterns to focus on (empty = all files)
+  include_patterns: []
+
+# AI model settings
+model:
+  name: "gemini-2.5-flash"
+  temperature: 0.3
+  
+# Custom review rules (optional)
+custom_rules:
+  # Example: Flag specific patterns
+  - pattern: "TODO|FIXME|HACK"
+    message: "Found TODO/FIXME comment - should be addressed"
+    severity: warning
+  
+  - pattern: "console\\.log|print\\("
+    message: "Debug statement found - remove before merging"
+    severity: warning
