@@ -3,3 +3,7 @@ rich
 gitpython
 google-generativeai
 pytest
+pyyaml
+streamlit
+plotly
+pandas

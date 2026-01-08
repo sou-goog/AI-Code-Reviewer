@@ -91,6 +91,22 @@ python setup_hooks.py
 
 To uninstall: `rm .git/hooks/pre-commit`
 
+## 🌐 Web Dashboard
+
+Launch the interactive web interface:
+
+```bash
+streamlit run dashboard.py
+```
+
+Features:
+- 📝 Interactive code reviews
+- ⚙️ Configuration viewer
+- 📊 Statistics (coming soon)
+- 📥 Download reports
+
+See [DASHBOARD.md](DASHBOARD.md) for deployment to Streamlit Cloud (free!).
+
 ## 🚀 GitHub Actions Deployment
 
 ### Automatic PR Reviews (Free!)
@@ -150,11 +166,12 @@ Example configuration:
 - [x] GitHub Actions integration
 - [x] Pre-commit hooks
 - [x] Configuration file support
-- [ ] Custom review rules engine
+- [x] Custom review rules engine
+- [x] Web dashboard (Streamlit)
 - [ ] Multi-model support (Claude, GPT-4)
-- [ ] Web dashboard
 - [ ] Review history database
 - [ ] Team analytics
+- [ ] VS Code extension
 
 ## 🤝 Contributing
 

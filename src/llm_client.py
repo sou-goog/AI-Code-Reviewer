@@ -2,16 +2,20 @@ import os
 import google.generativeai as genai
 from typing import Optional
 
-def analyze_code_diff(diff: str) -> Optional[str]:
+def analyze_code_diff(diff: str, model_name: str = "gemini-2.5-flash") -> Optional[str]:
     """
     Sends the git diff to Google Gemini for analysis.
+    
+    Args:
+        diff: The git diff string
+        model_name: Name of the Gemini model to use
     """
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         return "Error: GEMINI_API_KEY environment variable not set."
 
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-2.5-flash')
+    model = genai.GenerativeModel(model_name)
 
     prompt = f"""
     You are an expert Senior Software Engineer and Code Reviewer.
