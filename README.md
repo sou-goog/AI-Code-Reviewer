@@ -1,5 +1,7 @@
 # 🤖 AI Code Reviewer Agent
 
+![AI Code Reviewer Banner](banner.png)
+
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub Actions](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?logo=github-actions)](https://github.com/features/actions)
@@ -39,7 +41,17 @@ Check out [PR #1](https://github.com/sou-goog/AI-Code-Reviewer/pull/1) to see th
 
 ## 🚀 Quick Start
 
-### Installation
+### Option 1: Automated Setup
+```bash
+python quickstart.py
+```
+The script will:
+- ✅ Check Python version
+- ✅ Verify git installation  
+- ✅ Install dependencies
+- ✅ Validate your setup
+
+### Option 2: Manual Setup
 
 ```bash
 # Clone the repository
@@ -61,6 +73,21 @@ $env:GEMINI_API_KEY="your_api_key_here"
 # Linux/Mac
 export GEMINI_API_KEY="your_api_key_here"
 ```
+
+### First Review
+
+```bash
+# Make some code changes
+echo "def hello(): print('world')" > test.py
+
+# Stage the changes  
+git add test.py
+
+# Run the review
+python -m src.main review
+```
+
+See [EXAMPLE_REVIEW.md](EXAMPLE_REVIEW.md) for sample output.
 
 ## 📖 Usage
 
