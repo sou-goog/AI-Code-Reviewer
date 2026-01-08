@@ -50,3 +50,12 @@ vulnerable.py
 
 # Streamlit
 .streamlit/
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Database
+*.db
+reviews.db

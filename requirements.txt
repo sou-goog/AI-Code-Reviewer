@@ -3,6 +3,8 @@ rich
 gitpython
 google-generativeai
 pytest
+pytest-cov
+pytest-mock
 pyyaml
 streamlit
 plotly

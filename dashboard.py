@@ -213,43 +213,103 @@ with tab2:
 with tab3:
     st.markdown("### 📊 Review Analytics")
     
-    # Metrics row
-    col1, col2, col3, col4 = st.columns(4)
+    # Get real stats from database
+    try:
+        from src.database import ReviewDatabase
+        db = ReviewDatabase()
+        stats = db.get_review_stats()
+        recent_reviews = db.get_recent_reviews(5)
+        
+        # Metrics row
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            st.metric(
+                label="Total Reviews",
+                value=stats['total_reviews'],
+                help="Total number of reviews run"
+            )
+        
+        with col2:
+            total_issues = sum(stats['total_issues'].values())
+            st.metric(
+                label="Issues Found", 
+                value=total_issues,
+                help="Total issues detected"
+            )
+        
+        with col3:
+            st.metric(
+                label="Critical Issues",
+                value=stats['total_issues']['critical'],
+                help="High severity issues"
+            )
+        
+        with col4:
+            st.metric(
+                label="Avg Duration",
+                value=f"{stats['avg_duration']}s",
+                help="Average review time"
+            )
+        
+        st.markdown("---")
+        
+        # Issue breakdown chart
+        if total_issues > 0:
+            st.markdown("#### Issue Severity Breakdown")
+            col_a, col_b = st.columns([2, 1])
+            
+            with col_a:
+                import plotly.graph_objects as go
+                
+                fig = go.Figure(data=[go.Pie(
+                    labels=['🔴 Critical', '🟡 Warning', '🟢 Suggestion'],
+                    values=[
+                        stats['total_issues']['critical'],
+                        stats['total_issues']['warning'],
+                        stats['total_issues']['suggestion']
+                    ],
+                    marker=dict(colors=['#ef4444', '#eab308', '#22c55e']),
+                    hole=0.4
+                )])
+                fig.update_layout(
+                    showlegend=True,
+                    height=300,
+                    margin=dict(t=0, b=0, l=0, r=0)
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            
+            with col_b:
+                st.markdown("**Summary**")
+                st.markdown(f"- 🔴 Critical: {stats['total_issues']['critical']}")
+                st.markdown(f"- 🟡 Warning: {stats['total_issues']['warning']}")
+                st.markdown(f"- 🟢 Suggestion: {stats['total_issues']['suggestion']}")
+                st.markdown(f"- **Total**: {total_issues}")
+        
+        # Recent reviews
+        if recent_reviews:
+            st.markdown("---")
+            st.markdown("#### Recent Reviews")
+            
+            for review in recent_reviews:
+                with st.expander(
+                    f"📝 {review['diff_type'].title()} - {review['timestamp']}", 
+                    expanded=False
+                ):
+                    col1, col2, col3 = st.columns(3)
+                    with col1:
+                        st.metric("Files", review['file_count'])
+                    with col2:
+                        st.metric("Issues", 
+                            review['critical_count'] + review['warning_count'] + review['suggestion_count'])
+                    with col3:
+                        st.metric("Duration", f"{review['duration_seconds']:.1f}s")
+        else:
+            st.info("📈 No reviews yet. Run a review to see analytics!")
     
-    with col1:
-        st.metric(
-            label="Total Reviews",
-            value="Coming Soon",
-            delta=None,
-            help="Total number of reviews run"
-        )
-    
-    with col2:
-        st.metric(
-            label="Issues Found", 
-            value="Coming Soon",
-            delta=None,
-            help="Total issues detected"
-        )
-    
-    with col3:
-        st.metric(
-            label="Critical Issues",
-            value="Coming Soon",
-            delta=None,
-            help="High severity issues"
-        )
-    
-    with col4:
-        st.metric(
-            label="Files Reviewed",
-            value="Coming Soon",
-            delta=None,
-            help="Total files analyzed"
-        )
-    
-    st.markdown("---")
-    st.info("📈 Advanced analytics with review history tracking coming in future updates!")
+    except Exception as e:
+        st.error(f"Error loading analytics: {e}")
+        st.info("📈 Analytics will appear here after running reviews!")
 
 # Footer
 st.markdown("---")
