@@ -1,6 +1,11 @@
 # 🤖 AI Code Reviewer Agent
 
-AI-powered code review tool using Google Gemini. Catch bugs, security issues, and style problems before you commit.
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub Actions](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?logo=github-actions)](https://github.com/features/actions)
+[![Powered by Gemini](https://img.shields.io/badge/Powered%20by-Google%20Gemini-4285F4?logo=google)](https://ai.google.dev/)
+
+> AI-powered code review tool using Google Gemini. Catch bugs, security issues, and style problems before you commit. **100% Free!**
 
 ## ✨ Features
 

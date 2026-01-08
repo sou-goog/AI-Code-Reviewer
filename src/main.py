@@ -12,13 +12,18 @@ def review(
     """
     Analyze changes in the current git repository.
     """
-    console.print("[bold green]Starting Code Review...[/bold green]")
+    console.print("[bold green]🔍 Starting Code Review...[/bold green]")
+    
     try:
         from src.reviewer import run_review
-        report = run_review(diff_type=diff_type, output_format=format)
+        
+        with console.status("[bold blue]Analyzing code with AI...[/bold blue]"):
+            report = run_review(diff_type=diff_type, output_format=format)
         
         if format == "terminal":
-            console.print(report)
+            from rich.markdown import Markdown
+            md = Markdown(report)
+            console.print(md)
         elif format == "markdown":
             filename = f"review-{diff_type}.md"
             with open(filename, "w", encoding="utf-8") as f:
@@ -28,8 +33,11 @@ def review(
             import json
             output = {"diff_type": diff_type, "review": report}
             print(json.dumps(output, indent=2))
+    except KeyboardInterrupt:
+        console.print("\n[yellow]Review cancelled.[/yellow]")
     except Exception as e:
-        console.print(f"[bold red]An error occurred:[/bold red] {e}")
+        console.print(f"[bold red]❌ An error occurred:[/bold red] {e}")
+        console.print("[dim]Tip: Make sure GEMINI_API_KEY is set and you're in a git repository.[/dim]")
 
 @app.command()
 def config(api_key: str):

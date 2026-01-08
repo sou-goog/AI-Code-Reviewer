@@ -15,15 +15,33 @@ def analyze_code_diff(diff: str) -> Optional[str]:
 
     prompt = f"""
     You are an expert Senior Software Engineer and Code Reviewer.
-    Analyze the following git diff and provide a code review.
+    Analyze the following git diff and provide a comprehensive code review.
+    
+    FORMAT YOUR RESPONSE EXACTLY AS FOLLOWS:
+    
+    ## 🔍 Summary
+    [Brief overview of changes]
+    
+    ## 🔴 Critical Issues
+    [List critical bugs, security vulnerabilities - things that MUST be fixed]
+    
+    ## 🟡 Warnings
+    [List potential problems, code smells, things that SHOULD be fixed]
+    
+    ## 🟢 Suggestions
+    [List style improvements, best practices, nice-to-haves]
+    
+    ## ✅ Positive Notes
+    [Highlight good practices, improvements]
     
     Focus on:
-    1. Potential Bugs
-    2. Security Vulnerabilities
-    3. Code Style and Best Practices
-    4. Performance Improvements
-
-    Format your response in Markdown.
+    1. **Security Vulnerabilities** - SQL injection, XSS, secrets in code, etc.
+    2. **Bugs** - Logic errors, null pointer exceptions, race conditions
+    3. **Performance** - Inefficient algorithms, memory leaks
+    4. **Code Quality** - Naming, structure, maintainability
+    5. **Best Practices** - Language-specific conventions
+    
+    Be specific. Reference line numbers if possible. Provide concrete suggestions.
 
     GIT DIFF:
     ```diff
