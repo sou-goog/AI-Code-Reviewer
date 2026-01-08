@@ -1,0 +1,80 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  ai-review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      
+      - name: Get PR diff
+        id: pr-diff
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          DIFF=$(git diff origin/${{ github.base_ref }}...HEAD)
+          
+          if [ -z "$DIFF" ]; then
+            echo "No changes to review"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            # Save diff to file for the next step
+            echo "$DIFF" > pr_diff.txt
+          fi
+      
+      - name: Run AI Review
+        if: steps.pr-diff.outputs.has_changes == 'true'
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          # Create a temporary Python script to run the review
+          cat > run_review.py << 'EOF'
+          import os
+          from src.llm_client import analyze_code_diff
+
+          with open('pr_diff.txt', 'r') as f:
+              diff = f.read()
+          
+          review = analyze_code_diff(diff)
+          
+          with open('review_output.md', 'w') as f:
+              f.write(review)
+          EOF
+          
+          python run_review.py
+      
+      - name: Post Review Comment
+        if: steps.pr-diff.outputs.has_changes == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const review = fs.readFileSync('review_output.md', 'utf8');
+            
+            const comment = `## 🤖 AI Code Review\n\n${review}\n\n---\n*Powered by Google Gemini*`;
+            
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: comment
+            });

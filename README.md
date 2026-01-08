@@ -62,7 +62,27 @@ python -m src.main review --format markdown
 python -m src.main review --format json
 ```
 
-## 🛠️ Options
+## � GitHub Actions Deployment
+
+### Automatic PR Reviews (Free!)
+
+Set up automatic AI reviews on every Pull Request:
+
+1. **Push to GitHub**:
+```bash
+git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
+git push -u origin main
+```
+
+2. **Add API Key Secret**:
+   - Go to repo **Settings** → **Secrets and variables** → **Actions**
+   - Add secret: `GEMINI_API_KEY` = your API key
+
+3. **Create a PR** - The AI will automatically review and comment!
+
+📖 See [GITHUB_ACTIONS_SETUP.md](GITHUB_ACTIONS_SETUP.md) for detailed instructions.
+
+## �🛠️ Options
 
 | Option | Values | Default | Description |
 |--------|--------|---------|-------------|
@@ -82,9 +102,10 @@ python -m src.main review --format json
 - [x] Basic CLI with staged changes review
 - [x] Multiple diff types support
 - [x] Output format options
-- [ ] GitHub Actions integration
+- [x] GitHub Actions integration
 - [ ] Custom review rules
 - [ ] Pre-commit hooks
+- [ ] Severity levels
 - [ ] Web dashboard
 
 ## 📄 License
