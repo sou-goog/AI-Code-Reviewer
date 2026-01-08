@@ -1,10 +1,10 @@
 """
 Retry logic with exponential backoff for API calls.
 """
-import time
 import functools
-from typing import Callable, Type, Tuple, Optional
 import logging
+import time
+from typing import Callable, Optional, Tuple, Type
 
 logger = logging.getLogger(__name__)
 

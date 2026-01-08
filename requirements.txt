@@ -9,3 +9,8 @@ pyyaml
 streamlit
 plotly
 pandas
+black
+isort
+flake8
+mypy
+types-PyYAML

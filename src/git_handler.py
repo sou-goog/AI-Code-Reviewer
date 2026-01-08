@@ -1,5 +1,7 @@
-import git
 from typing import Optional
+
+import git
+
 
 def get_staged_diff(repo_path: str = ".") -> Optional[str]:
     """

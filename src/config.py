@@ -1,7 +1,9 @@
-import yaml
 import os
 import re
 from typing import Dict, List, Optional
+
+import yaml
+
 
 class ConfigManager:
     """Manages configuration from .codereview.yaml"""
