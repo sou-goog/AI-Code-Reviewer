@@ -1,15 +1,21 @@
+"""
+Enhanced GitHub Actions workflow with inline comments.
+Posts review comments directly on changed lines in PRs.
+"""
+
 name: AI Code Review
 
 on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
-  ai-review:
+  ai-code-review:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
     
     steps:
       - name: Checkout code
@@ -18,63 +24,172 @@ jobs:
           fetch-depth: 0
       
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.11'
       
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
+          python -m pip install --upgrade pip
+          pip install google-generativeai gitpython pyyaml
       
       - name: Get PR diff
-        id: pr-diff
+        id: diff
         run: |
-          git fetch origin ${{ github.base_ref }}
-          DIFF=$(git diff origin/${{ github.base_ref }}...HEAD)
-          
-          if [ -z "$DIFF" ]; then
-            echo "No changes to review"
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-          else
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-            # Save diff to file for the next step
-            echo "$DIFF" > pr_diff.txt
-          fi
+          git fetch origin ${{ github.event.pull_request.base.ref }}
+          git diff origin/${{ github.event.pull_request.base.ref }}...HEAD > pr_diff.txt
+          echo "Diff saved"
       
-      - name: Run AI Review
-        if: steps.pr-diff.outputs.has_changes == 'true'
+      - name: Run AI Code Review with Inline Comments
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Create a temporary Python script to run the review
-          cat > run_review.py << 'EOF'
+          python - <<'PYTHON_SCRIPT'
           import os
-          from src.llm_client import analyze_code_diff
-
+          import google.generativeai as genai
+          import json
+          import re
+          from typing import List, Dict
+          
+          # Configure Gemini
+          genai.configure(api_key=os.environ['GEMINI_API_KEY'])
+          model = genai.GenerativeModel('gemini-2.5-flash')
+          
+          # Read diff
           with open('pr_diff.txt', 'r') as f:
               diff = f.read()
           
-          review = analyze_code_diff(diff)
+          if not diff.strip():
+              print("No changes to review")
+              exit(0)
           
-          with open('review_output.md', 'w') as f:
-              f.write(review)
-          EOF
+          # Enhanced prompt for structured output
+          prompt = f"""
+          Analyze this git diff and provide a code review with INLINE COMMENTS.
           
-          python run_review.py
+          For each issue found, provide:
+          1. File path
+          2. Line number (approximate)
+          3. Severity (CRITICAL, WARNING, SUGGESTION)
+          4. Issue description
+          5. Suggested fix
+          
+          Format your response as JSON array:
+          [
+            {{
+              "file": "path/to/file.py",
+              "line": 10,
+              "severity": "CRITICAL",
+              "message": "SQL injection vulnerability",
+              "suggestion": "Use parameterized queries"
+            }}
+          ]
+          
+          Only include actual issues. If code is good, return empty array [].
+          
+          GIT DIFF:
+          ```diff
+          {diff}
+          ```
+          """
+          
+          try:
+              response = model.generate_content(prompt)
+              review_text = response.text
+              
+              # Try to parse JSON from response
+              json_match = re.search(r'\[.*\]', review_text, re.DOTALL)
+              if json_match:
+                  issues = json.loads(json_match.group())
+              else:
+                  issues = []
+              
+              # Also generate summary comment
+              summary_prompt = f"""
+              Provide a brief summary of the code review:
+              - Number of issues found
+              - Most critical issues
+              - Overall code quality assessment
+              
+              Keep it concise (3-4 sentences).
+              
+              DIFF:
+              {diff}
+              """
+              
+              summary_response = model.generate_content(summary_prompt)
+              summary = summary_response.text
+              
+              # Save outputs
+              with open('review_issues.json', 'w') as f:
+                  json.dump(issues, f, indent=2)
+              
+              with open('review_summary.txt', 'w') as f:
+                  f.write(summary)
+              
+              print(f"Found {len(issues)} issues")
+              
+          except Exception as e:
+              print(f"Error during review: {e}")
+              with open('review_summary.txt', 'w') as f:
+                  f.write(f"⚠️ AI review encountered an error: {e}")
+              with open('review_issues.json', 'w') as f:
+                  json.dump([], f)
+          
+          PYTHON_SCRIPT
       
-      - name: Post Review Comment
-        if: steps.pr-diff.outputs.has_changes == 'true'
+      - name: Post Summary Comment
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
-            const review = fs.readFileSync('review_output.md', 'utf8');
+            const summary = fs.readFileSync('review_summary.txt', 'utf8');
             
-            const comment = `## 🤖 AI Code Review\n\n${review}\n\n---\n*Powered by Google Gemini*`;
+            const body = `## 🤖 AI Code Review Summary\n\n${summary}\n\n---\n*Powered by Google Gemini*`;
             
-            github.rest.issues.createComment({
+            await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: comment
+              body: body
             });
+      
+      - name: Post Inline Comments
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const issues = JSON.parse(fs.readFileSync('review_issues.json', 'utf8'));
+            
+            const severityEmoji = {
+              'CRITICAL': '🔴',
+              'WARNING': '🟡',
+              'SUGGESTION': '🟢'
+            };
+            
+            for (const issue of issues) {
+              const emoji = severityEmoji[issue.severity] || 'ℹ️';
+              const body = `${emoji} **${issue.severity}**\n\n${issue.message}\n\n💡 **Suggestion:** ${issue.suggestion}`;
+              
+              try {
+                await github.rest.pulls.createReviewComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: context.issue.number,
+                  body: body,
+                  commit_id: context.payload.pull_request.head.sha,
+                  path: issue.file,
+                  line: issue.line
+                });
+              } catch (error) {
+                console.log(`Could not post inline comment: ${error.message}`);
+                // Fallback: post as regular comment
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  body: `${emoji} **${issue.severity}** in \`${issue.file}\` (line ${issue.line})\n\n${issue.message}\n\n💡 ${issue.suggestion}`
+                });
+              }
+            }

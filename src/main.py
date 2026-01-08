@@ -42,14 +42,89 @@ def review(
 @app.command()
 def config(api_key: str):
     """
-    Configure the Google Gemini API Key.
+    Guide for configuring the GEMINI_API_KEY.
     """
-    # For simplicity in this MVP, we will guide the user to set the env var.
-    # In a full app, we might use a .env file or keyring.
-    console.print(f"[bold yellow]To configure, please set the environment variable:[/bold yellow]")
-    console.print(f"[code]setx GEMINI_API_KEY \"{api_key}\"[/code]")
-    console.print("Then restart your terminal.")
-    # We could also use dotenv, but let's keep it dependency-light for now or just tell them.
+    console.print("[bold yellow]🔑 API Key Configuration[/bold yellow]\n")
+    console.print("Set your GEMINI_API_KEY environment variable:")
+    console.print("\n[bold]Windows (PowerShell):[/bold]")
+    console.print(f'  $env:GEMINI_API_KEY="{api_key}"')
+    console.print("\n[bold]Linux/Mac:[/bold]")
+    console.print(f'  export GEMINI_API_KEY="{api_key}"')
+    console.print("\n[dim]Get a free API key: https://aistudio.google.com/app/apikey[/dim]")
+
+@app.command()
+def init():
+    """
+    Initialize AI Code Reviewer in current repository.
+    """
+    import os
+    
+    console.print("[bold green]🚀 Initializing AI Code Reviewer...[/bold green]\n")
+    
+    # Check if it's a git repo
+    if not os.path.exists('.git'):
+        console.print("[red]❌ Not a git repository. Run 'git init' first.[/red]")
+        return
+    
+    console.print("✅ Git repository detected")
+    
+    # Check for API key
+    if os.environ.get("GEMINI_API_KEY"):
+        console.print("✅ GEMINI_API_KEY is set")
+    else:
+        console.print("[yellow]⚠️  GEMINI_API_KEY not set[/yellow]")
+        console.print("   Get yours at: https://aistudio.google.com/app/apikey")
+    
+    # Create config file
+    config_file = ".codereview.yaml"
+    if not os.path.exists(config_file):
+        import shutil
+        if os.path.exists(".codereview.example.yaml"):
+            shutil.copy(".codereview.example.yaml", config_file)
+            console.print(f"✅ Created {config_file}")
+        else:
+            console.print(f"[yellow]⚠️  {config_file} template not found[/yellow]")
+    else:
+        console.print(f"✅ {config_file} already exists")
+    
+    console.print("\n[bold green]🎉 Setup complete![/bold green]")
+    console.print("\nNext steps:")
+    console.print("  1. Make some code changes")
+    console.print("  2. Stage them: [bold]git add <files>[/bold]")
+    console.print("  3. Run review: [bold]python -m src.main review[/bold]")
+
+@app.command()
+def stats():
+    """
+    Show review statistics from database.
+    """
+    from src.database import ReviewDatabase
+    
+    console.print("[bold blue]📊 Review Statistics[/bold blue]\n")
+    
+    try:
+        db = ReviewDatabase()
+        stats = db.get_review_stats()
+        recent = db.get_recent_reviews(5)
+        
+        # Summary metrics
+        console.print(f"[green]Total Reviews:[/green] {stats['total_reviews']}")
+        console.print(f"[green]Average Duration:[/green] {stats['avg_duration']}s")
+        
+        issues = stats['total_issues']
+        console.print(f"\n[red]🔴 Critical:[/red] {issues['critical']}")
+        console.print(f"[yellow]🟡 Warning:[/yellow] {issues['warning']}")
+        console.print(f"[blue]🟢 Suggestion:[/blue] {issues['suggestion']}")
+        
+        # Recent reviews
+        if recent:
+            console.print("\n[bold]Recent Reviews:[/bold]")
+            for r in recent[:5]:
+                total_issues = r['critical_count'] + r['warning_count'] + r['suggestion_count']
+                console.print(f"  • {r['timestamp']} - {r['diff_type']} - {total_issues} issues ({r['duration_seconds']:.1f}s)")
+        
+    except Exception as e:
+        console.print(f"[red]Error loading stats: {e}[/red]")
 
 if __name__ == "__main__":
     app()
