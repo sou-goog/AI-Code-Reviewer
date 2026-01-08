@@ -1,7 +1,5 @@
-"""
-Enhanced GitHub Actions workflow with inline comments.
-Posts review comments directly on changed lines in PRs.
-"""
+# Enhanced GitHub Actions workflow with inline comments
+# Posts review comments directly on changed lines in PRs
 
 name: AI Code Review
 
