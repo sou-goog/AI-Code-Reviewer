@@ -126,5 +126,74 @@ def stats():
     except Exception as e:
         console.print(f"[red]Error loading stats: {e}[/red]")
 
+
+@app.command()
+def version():
+    """
+    Show version information.
+    """
+    console.print("[bold cyan]AI Code Reviewer[/bold cyan]")
+    console.print("Version: [green]1.0.0[/green]")
+    console.print("Powered by [yellow]Google Gemini ✨[/yellow]")
+    console.print("\nRepository: https://github.com/sou-goog/AI-Code-Reviewer")
+
+
+@app.command()
+def doctor():
+    """
+    Check if everything is configured correctly.
+    """
+    import sys
+    from pathlib import Path
+    
+    console.print("[bold blue]🔍 System Health Check[/bold blue]\n")
+    
+    # Check Python version
+    py_version = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+    py_ok = sys.version_info >= (3, 9)
+    console.print(f"{'✅' if py_ok else '❌'} Python version: {py_version} {'(OK)' if py_ok else '(Need 3.9+)'}")
+    
+    # Check Git
+    try:
+        import git
+        git_ok = True
+        console.print("✅ Git: Installed")
+    except Exception:
+        git_ok = False
+        console.print("❌ Git: Not found")
+    
+    # Check API key
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if api_key:
+        console.print("✅ GEMINI_API_KEY: Configured")
+    else:
+        console.print("❌ GEMINI_API_KEY: Not set")
+        console.print("   Get one at: https://aistudio.google.com/app/apikey")
+    
+    # Check database
+    try:
+        from src.database import ReviewDatabase
+        db = ReviewDatabase()
+        console.print(f"✅ Database: Accessible ({db.get_total_reviews()} reviews)")
+    except Exception as e:
+        console.print(f"❌ Database: Error ({e})")
+    
+    # Check cache directory
+    cache_dir = Path.home() / ".code-reviewer" / "cache"
+    if cache_dir.exists():
+        from src.utils.cache import ReviewCache
+        cache = ReviewCache()
+        stats = cache.get_stats()
+        console.print(f"✅ Cache: OK ({stats['count']} entries, {stats['total_size_mb']} MB)")
+    else:
+        console.print("⚠️  Cache: Not initialized (will be created on first review)")
+    
+    console.print("\n[bold green]Overall Status:[/bold green]")
+    if py_ok and git_ok and api_key:
+        console.print("✅ Ready to review code!")
+    else:
+        console.print("⚠️  Some components need attention (see above)")
+
+
 if __name__ == "__main__":
     app()
