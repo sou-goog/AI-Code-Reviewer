@@ -4,7 +4,9 @@ Includes retry logic, caching, and comprehensive error handling.
 """
 import logging
 import os
-from typing import Optional
+import json
+import re
+from typing import Optional, Union, Dict, Any
 
 import google.generativeai as genai
 
@@ -18,8 +20,9 @@ def analyze_code_diff(
     diff: str,
     model_name: str = "gemini-2.5-flash",
     use_cache: bool = True,
-    timeout: Optional[int] = None
-) -> str:
+    timeout: Optional[int] = None,
+    output_format: str = "markdown"
+) -> Union[str, Dict[str, Any]]:
     """
     Analyze a code diff using Google Gemini AI.
     
@@ -28,9 +31,10 @@ def analyze_code_diff(
         model_name: Gemini model to use
         use_cache: Whether to use caching (default: True)
         timeout: Optional timeout in seconds
+        output_format: Output format ('markdown' or 'json')
         
     Returns:
-        AI-generated review as markdown string
+        AI-generated review as markdown string or JSON dict
         
     Raises:
         ReviewError: If API key not set or review fails
@@ -48,7 +52,8 @@ def analyze_code_diff(
     # Check cache if enabled
     if use_cache:
         cache = ReviewCache()
-        cache_key = cache.get_cache_key(diff, model_name)
+        # Add output_format to cache key to distinguish between formats
+        cache_key = cache.get_cache_key(diff, f"{model_name}_{output_format}")
         cached_review = cache.get(cache_key)
         
         if cached_review:
@@ -57,8 +62,35 @@ def analyze_code_diff(
     
     # Call API with retry logic
     try:
-        review = _call_gemini_api(diff, model_name, api_key, timeout)
+        review = _call_gemini_api(diff, model_name, api_key, timeout, output_format)
         
+        # Parse JSON if requested
+        if output_format == "json":
+            try:
+                # Extract JSON from code blocks if present
+                json_str = review
+                if "```json" in review:
+                    match = re.search(r'```json\s*(.*?)\s*```', review, re.DOTALL)
+                    if match:
+                        json_str = match.group(1)
+                elif "```" in review:
+                    match = re.search(r'```\s*(.*?)\s*```', review, re.DOTALL)
+                    if match:
+                        json_str = match.group(1)
+
+                review = json.loads(json_str)
+            except json.JSONDecodeError as e:
+                logger.error(f"Failed to parse JSON response: {e}")
+                # Fallback to returning the raw string if parsing fails, or could raise an error
+                # For now, let's keep it as is, but maybe wrap it in a dict to match signature
+                # In a real scenario, we might want to retry or ask LLM to fix it.
+                # Here we will return a structure indicating error
+                review = {
+                    "error": "Failed to parse JSON response",
+                    "raw_response": review,
+                    "issues": []
+                }
+
         # Cache the result
         if use_cache:
             cache.set(cache_key, {'review': review, 'model': model_name})
@@ -79,7 +111,8 @@ def _call_gemini_api(
     diff: str,
     model_name: str,
     api_key: str,
-    timeout: Optional[int]
+    timeout: Optional[int],
+    output_format: str = "markdown"
 ) -> str:
     """
     Internal function to call Gemini API with retry logic.
@@ -89,6 +122,7 @@ def _call_gemini_api(
         model_name: Model to use
         api_key: API key
         timeout: Timeout in seconds
+        output_format: Output format ('markdown' or 'json')
         
     Returns:
         Review text
@@ -96,7 +130,32 @@ def _call_gemini_api(
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel(model_name)
     
-    prompt = f"""
+    if output_format == "json":
+        prompt = f"""
+You are an expert code reviewer. Analyze this git diff and provide a comprehensive code review in JSON format.
+
+Return a JSON object with the following structure:
+{{
+    "summary": "Brief summary of the changes and overall quality",
+    "issues": [
+        {{
+            "severity": "critical|warning|suggestion|positive",
+            "file": "filename where issue is located",
+            "line": "line number or range (e.g. '10-15')",
+            "title": "Short title of the issue",
+            "description": "Detailed description and suggestion",
+            "category": "security|logic|style|performance|best_practice"
+        }}
+    ]
+}}
+
+GIT DIFF:
+```diff
+{diff}
+```
+"""
+    else:
+        prompt = f"""
 You are an expert code reviewer. Analyze this git diff and provide a comprehensive code review.
 
 Categorize your findings into sections:
