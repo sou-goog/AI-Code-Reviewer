@@ -144,6 +144,7 @@ def doctor():
     Check if everything is configured correctly.
     """
     import sys
+    import os
     from pathlib import Path
     
     console.print("[bold blue]🔍 System Health Check[/bold blue]\n")
