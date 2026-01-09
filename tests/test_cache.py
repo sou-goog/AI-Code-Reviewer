@@ -39,18 +39,14 @@ def test_cache_miss():
 
 def test_cache_expiry():
     """Test cache entries expire after TTL."""
-    import time
     with tempfile.TemporaryDirectory() as tmpdir:
-        # Create cache with very short TTL (1 second)
-        cache = ReviewCache(cache_dir=Path(tmpdir), ttl_days=0.00001)  # ~0.86 seconds
+        # Create cache with 0-day TTL (expires immediately)
+        cache = ReviewCache(cache_dir=Path(tmpdir), ttl_days=0)
         
         review_data = {"review": "Test review"}
         cache.set("test_key", review_data)
         
-        # Wait for expiry
-        time.sleep(1)
-        
-        # Should be expired now
+        # Should be expired immediately
         result = cache.get("test_key")
         assert result is None
 
@@ -79,10 +75,10 @@ def test_cache_stats():
         stats = cache.get_stats()
         assert stats["count"] == 0
         
-        # Add some entries with larger content to ensure size > 0
+        # Add some entries
         for i in range(3):
-            cache.set(f"key_{i}", {"review": f"Review {i}" * 100})  # Make content larger
+            cache.set(f"key_{i}", {"review": f"Review {i}"})
         
         stats = cache.get_stats()
         assert stats["count"] == 3
-        assert stats["total_size_mb"] >= 0  # Can be 0 if very small, but should be >= 0
+        assert stats["total_size_mb"] > 0
