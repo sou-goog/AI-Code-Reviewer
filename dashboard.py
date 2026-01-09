@@ -1,6 +1,9 @@
 import streamlit as st
 import os
 import sys
+import json
+import plotly.graph_objects as go
+import plotly.express as px
 from pathlib import Path
 
 # Add src to path
@@ -23,118 +26,220 @@ st.markdown("""
     :root {
         --primary-color: #6366f1;
         --secondary-color: #ec4899;
+        --bg-color: #f8fafc;
+        --card-bg: #ffffff;
     }
     
-    /* Hide default menu */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
+    /* Global Styles */
+    .stApp {
+        background-color: var(--bg-color);
+        font-family: 'Inter', sans-serif;
+    }
     
-    /* Title styling */
+    /* Header & Title */
     .main-title {
-        font-size: 3rem;
+        font-size: 3.5rem;
         font-weight: 800;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         text-align: center;
-        padding: 1rem 0;
+        padding: 1.5rem 0 0.5rem 0;
         margin-bottom: 0.5rem;
+        letter-spacing: -0.05em;
     }
     
     .subtitle {
         text-align: center;
-        color: #6b7280;
-        font-size: 1.2rem;
-        margin-bottom: 2rem;
+        color: #64748b;
+        font-size: 1.25rem;
+        margin-bottom: 3rem;
+        font-weight: 500;
     }
     
-    /* Card styling */
-    .stApp {
-        background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+    /* Custom Card Styling */
+    .review-card {
+        background-color: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e2e8f0;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .review-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .issue-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+    .file-badge {
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        font-family: 'Monaco', 'Consolas', monospace;
+    }
+
+    /* Severity Badges */
+    .badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .badge-critical { background-color: #fee2e2; color: #ef4444; }
+    .badge-warning { background-color: #fef9c3; color: #eab308; }
+    .badge-suggestion { background-color: #dcfce7; color: #22c55e; }
+    .badge-positive { background-color: #dbeafe; color: #3b82f6; }
+
+    /* Description Text */
+    .issue-desc {
+        color: #334155;
+        line-height: 1.6;
+        font-size: 1rem;
     }
     
     /* Buttons */
     .stButton>button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
         color: white;
         border: none;
         border-radius: 8px;
         padding: 0.75rem 2rem;
         font-weight: 600;
-        transition: transform 0.2s;
+        font-size: 1rem;
+        width: 100%;
+        transition: all 0.2s;
     }
     
     .stButton>button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-    }
-    
-    /* Metrics */
-    [data-testid="stMetricValue"] {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #667eea;
-    }
-    
-    /* Sidebar */
-    [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #667eea15 0%, #764ba215 100%);
+        opacity: 0.9;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
     }
     
     /* Tabs */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
+        gap: 2rem;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 1px;
     }
     
     .stTabs [data-baseweb="tab"] {
-        border-radius: 8px 8px 0 0;
-        padding: 12px 24px;
+        height: 3rem;
+        border: none;
+        background-color: transparent;
+        color: #64748b;
         font-weight: 600;
+        padding: 0;
+    }
+
+    .stTabs [aria-selected="true"] {
+        color: #6366f1 !important;
+        border-bottom: 2px solid #6366f1 !important;
     }
     
-    /* Success/Error boxes */
-    .stSuccess, .stError, .stInfo, .stWarning {
+    /* Sidebar */
+    section[data-testid="stSidebar"] {
+        background-color: #ffffff;
+        border-right: 1px solid #e2e8f0;
+    }
+
+    /* Metric Cards */
+    div[data-testid="metric-container"] {
+        background-color: white;
+        border: 1px solid #e2e8f0;
         border-radius: 8px;
+        padding: 1rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 </style>
 """, unsafe_allow_html=True)
 
+# Helper functions
+def get_severity_color(severity):
+    colors = {
+        'critical': '#ef4444',
+        'warning': '#eab308',
+        'suggestion': '#22c55e',
+        'positive': '#3b82f6'
+    }
+    return colors.get(severity.lower(), '#94a3b8')
+
+def render_issue_card(issue):
+    severity = issue.get('severity', 'info').lower()
+
+    st.markdown(f"""
+    <div class="review-card">
+        <div class="card-header">
+            <span class="badge badge-{severity}">{severity}</span>
+            <span class="file-badge">📄 {issue.get('file', 'General')} : {issue.get('line', 'N/A')}</span>
+        </div>
+        <div class="issue-title">{issue.get('title', 'Issue Found')}</div>
+        <div class="issue-desc">{issue.get('description', 'No description provided.')}</div>
+    </div>
+    """, unsafe_allow_html=True)
+
 # Header
 st.markdown('<h1 class="main-title">🤖 AI Code Reviewer</h1>', unsafe_allow_html=True)
-st.markdown('<p class="subtitle">Powered by Google Gemini ✨</p>', unsafe_allow_html=True)
+st.markdown('<p class="subtitle">Intelligent Code Analysis Powered by Gemini Pro</p>', unsafe_allow_html=True)
 
 # Sidebar
 with st.sidebar:
-    st.header("⚙️ Settings")
+    st.markdown("### ⚙️ Settings")
     
     # API Key check
     api_key = os.environ.get("GEMINI_API_KEY", "")
     if not api_key:
-        st.error("⚠️ GEMINI_API_KEY not set!")
+        st.error("⚠️ GEMINI_API_KEY missing")
         api_key_input = st.text_input("Enter API Key:", type="password")
         if api_key_input:
             os.environ["GEMINI_API_KEY"] = api_key_input
             st.success("✅ Key configured!")
+            st.rerun()
     else:
-        st.success("✅ API Key configured")
+        st.success("✅ API Key Active")
     
     st.markdown("---")
     
     # Review options
-    st.subheader("📋 Review Options")
+    st.markdown("### 📋 Review Scope")
     diff_type = st.selectbox(
-        "Diff Type",
+        "Select Changes",
         ["staged", "uncommitted", "last-commit"],
-        help="What changes to review"
+        format_func=lambda x: x.replace("-", " ").title(),
+        help="Choose which changes to analyze"
     )
     
     st.markdown("---")
     
     # Quick links
-    st.subheader("🔗 Quick Links")
-    st.markdown("[📖 Documentation](https://github.com/sou-goog/AI-Code-Reviewer)")
-    st.markdown("[🐛 Report Issue](https://github.com/sou-goog/AI-Code-Reviewer/issues)")
-    st.markdown("[⭐ Star on GitHub](https://github.com/sou-goog/AI-Code-Reviewer)")
+    st.markdown("### 🔗 Resources")
+    st.markdown("""
+    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <a href="https://github.com/sou-goog/AI-Code-Reviewer" style="text-decoration: none; color: #64748b;">📖 Documentation</a>
+        <a href="https://github.com/sou-goog/AI-Code-Reviewer/issues" style="text-decoration: none; color: #64748b;">🐛 Report Bug</a>
+    </div>
+    """, unsafe_allow_html=True)
 
 # Load config
 config = ConfigManager()
@@ -143,180 +248,158 @@ config = ConfigManager()
 tab1, tab2, tab3 = st.tabs(["📝 Code Review", "⚙️ Configuration", "📊 Analytics"])
 
 with tab1:
-    col1, col2, col3 = st.columns([1, 2, 1])
+    col1, col2, col3 = st.columns([1, 6, 1])
     with col2:
-        st.markdown("### Run AI Code Review")
-        st.markdown("Analyze your code changes for bugs, security issues, and improvements.")
-        
-        if st.button("🚀 Analyze Code", type="primary", use_container_width=True):
-            with st.spinner("🔍 AI is analyzing your code..."):
+        if st.button("🚀 Analyze Code Changes", type="primary", use_container_width=True):
+            with st.spinner("🧠 AI is reading your code..."):
                 try:
-                    report = run_review(diff_type=diff_type, output_format="terminal")
+                    # Request JSON output
+                    result = run_review(diff_type=diff_type, output_format="json")
                     
-                    if "No" in report and "changes found" in report:
-                        st.info(f"ℹ️ {report}")
-                    elif "Error" in report:
-                        st.error(f"❌ {report}")
+                    if isinstance(result, str):
+                        # Fallback for text messages (errors or "no changes")
+                        if "No" in result and "changes found" in result:
+                            st.info(f"ℹ️ {result}")
+                        else:
+                            st.error(f"❌ {result}")
                     else:
-                        st.success("✅ Review Complete!")
-                        st.markdown("---")
-                        st.markdown(report)
+                        # Process JSON result
+                        issues = result.get('issues', [])
+                        summary = result.get('summary', 'Review complete')
                         
-                        # Download section
-                        st.markdown("---")
-                        col_a, col_b, col_c = st.columns([1, 2, 1])
-                        with col_b:
-                            st.download_button(
-                                label="📥 Download Review",
-                                data=report,
-                                file_name=f"review-{diff_type}.md",
-                                mime="text/markdown",
-                                use_container_width=True
+                        st.success("✅ Analysis Complete!")
+                        st.markdown(f"### 📋 Summary\n{summary}")
+
+                        if issues:
+                            st.markdown("---")
+
+                            # Filters
+                            severities = list(set(i.get('severity', 'info') for i in issues))
+                            selected_severity = st.multiselect(
+                                "Filter by Severity",
+                                options=severities,
+                                default=severities
                             )
+
+                            filtered_issues = [i for i in issues if i.get('severity') in selected_severity]
+
+                            if filtered_issues:
+                                for issue in filtered_issues:
+                                    render_issue_card(issue)
+                            else:
+                                st.info("No issues match selected filters.")
+
+                        # Download JSON
+                        st.markdown("---")
+                        st.download_button(
+                            label="📥 Download JSON Report",
+                            data=json.dumps(result, indent=2),
+                            file_name=f"review-{diff_type}.json",
+                            mime="application/json",
+                        )
+
                 except Exception as e:
-                    st.error(f"❌ Error: {e}")
+                    st.error(f"❌ An error occurred: {str(e)}")
 
 with tab2:
-    st.markdown("### Current Configuration")
+    st.markdown("### 🛠️ Configuration")
     
-    # Display config in nice format
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("#### 🎯 Review Settings")
-        review_config = config.config.get('review', {})
-        st.json(review_config)
-    
+        with st.container():
+            st.markdown("#### 🎯 Review Rules")
+            review_config = config.config.get('review', {})
+            st.json(review_config)
+
     with col2:
-        st.markdown("#### 🤖 Model Settings")
-        model_config = config.config.get('model', {})
-        st.json(model_config)
+        with st.container():
+            st.markdown("#### 🤖 Model Parameters")
+            model_config = config.config.get('model', {})
+            st.json(model_config)
     
     st.markdown("---")
+    st.markdown("#### 🔧 Custom Pattern Matching")
     
-    # Custom Rules
-    st.markdown("### 🎯 Custom Rules")
     custom_rules = config.get_custom_rules()
-    
     if custom_rules:
         for i, rule in enumerate(custom_rules, 1):
-            with st.expander(f"📌 Rule {i}: {rule.get('message', 'N/A')}", expanded=False):
-                col_a, col_b = st.columns(2)
-                with col_a:
-                    st.code(f"Pattern: {rule.get('pattern', 'N/A')}", language="text")
-                with col_b:
-                    severity = rule.get('severity', 'N/A')
-                    st.code(f"Severity: {severity}", language="text")
+            with st.expander(f"Rule {i}: {rule.get('message', 'Custom Rule')}"):
+                st.markdown(f"**Pattern:** `{rule.get('pattern')}`")
+                st.markdown(f"**Severity:** `{rule.get('severity')}`")
     else:
-        st.info("💡 No custom rules configured. Edit `.codereview.yaml` to add rules.")
+        st.info("💡 No custom rules defined. Add them to `.codereview.yaml`")
 
 with tab3:
-    st.markdown("### 📊 Review Analytics")
+    st.markdown("### 📊 Performance Analytics")
     
-    # Get real stats from database
     try:
         from src.database import ReviewDatabase
         db = ReviewDatabase()
         stats = db.get_review_stats()
-        recent_reviews = db.get_recent_reviews(5)
+        recent_reviews = db.get_recent_reviews(10)
         
-        # Metrics row
-        col1, col2, col3, col4 = st.columns(4)
-        
-        with col1:
-            st.metric(
-                label="Total Reviews",
-                value=stats['total_reviews'],
-                help="Total number of reviews run"
-            )
-        
-        with col2:
-            total_issues = sum(stats['total_issues'].values())
-            st.metric(
-                label="Issues Found", 
-                value=total_issues,
-                help="Total issues detected"
-            )
-        
-        with col3:
-            st.metric(
-                label="Critical Issues",
-                value=stats['total_issues']['critical'],
-                help="High severity issues"
-            )
-        
-        with col4:
-            st.metric(
-                label="Avg Duration",
-                value=f"{stats['avg_duration']}s",
-                help="Average review time"
-            )
+        # Top Metrics
+        m1, m2, m3, m4 = st.columns(4)
+        m1.metric("Total Reviews", stats['total_reviews'])
+        m2.metric("Total Issues", sum(stats['total_issues'].values()))
+        m3.metric("Avg Duration", f"{stats['avg_duration']}s")
+        m4.metric("Critical Bugs", stats['total_issues']['critical'])
         
         st.markdown("---")
         
-        # Issue breakdown chart
-        if total_issues > 0:
-            st.markdown("#### Issue Severity Breakdown")
-            col_a, col_b = st.columns([2, 1])
-            
-            with col_a:
-                import plotly.graph_objects as go
-                
-                fig = go.Figure(data=[go.Pie(
-                    labels=['🔴 Critical', '🟡 Warning', '🟢 Suggestion'],
+        # Charts
+        c1, c2 = st.columns(2)
+
+        with c1:
+            st.subheader("Severity Distribution")
+            if sum(stats['total_issues'].values()) > 0:
+                fig = px.pie(
+                    names=['Critical', 'Warning', 'Suggestion'],
                     values=[
                         stats['total_issues']['critical'],
                         stats['total_issues']['warning'],
                         stats['total_issues']['suggestion']
                     ],
-                    marker=dict(colors=['#ef4444', '#eab308', '#22c55e']),
+                    color_discrete_sequence=['#ef4444', '#eab308', '#22c55e'],
                     hole=0.4
-                )])
-                fig.update_layout(
-                    showlegend=True,
-                    height=300,
-                    margin=dict(t=0, b=0, l=0, r=0)
                 )
+                fig.update_layout(showlegend=True, height=350, margin=dict(t=0,b=0,l=0,r=0))
                 st.plotly_chart(fig, use_container_width=True)
-            
-            with col_b:
-                st.markdown("**Summary**")
-                st.markdown(f"- 🔴 Critical: {stats['total_issues']['critical']}")
-                st.markdown(f"- 🟡 Warning: {stats['total_issues']['warning']}")
-                st.markdown(f"- 🟢 Suggestion: {stats['total_issues']['suggestion']}")
-                st.markdown(f"- **Total**: {total_issues}")
-        
-        # Recent reviews
-        if recent_reviews:
-            st.markdown("---")
-            st.markdown("#### Recent Reviews")
-            
-            for review in recent_reviews:
-                with st.expander(
-                    f"📝 {review['diff_type'].title()} - {review['timestamp']}", 
-                    expanded=False
-                ):
-                    col1, col2, col3 = st.columns(3)
-                    with col1:
-                        st.metric("Files", review['file_count'])
-                    with col2:
-                        st.metric("Issues", 
-                            review['critical_count'] + review['warning_count'] + review['suggestion_count'])
-                    with col3:
-                        st.metric("Duration", f"{review['duration_seconds']:.1f}s")
-        else:
-            st.info("📈 No reviews yet. Run a review to see analytics!")
-    
+            else:
+                st.info("No data available yet")
+
+        with c2:
+            st.subheader("Recent Activity")
+            if recent_reviews:
+                # Prepare data for line chart
+                import pandas as pd
+                df = pd.DataFrame(recent_reviews)
+                df['total_issues'] = df['critical_count'] + df['warning_count'] + df['suggestion_count']
+
+                fig = px.bar(
+                    df,
+                    x='timestamp',
+                    y='total_issues',
+                    color='diff_type',
+                    title='Issues per Review',
+                    labels={'total_issues': 'Issues Found', 'timestamp': 'Date'}
+                )
+                fig.update_layout(height=350, margin=dict(t=30,b=0,l=0,r=0))
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.info("Run your first review to see trends")
+
     except Exception as e:
-        st.error(f"Error loading analytics: {e}")
-        st.info("📈 Analytics will appear here after running reviews!")
+        st.error(f"Failed to load analytics: {e}")
 
 # Footer
 st.markdown("---")
-col1, col2, col3 = st.columns([1, 2, 1])
-with col2:
-    st.markdown(
-        '<p style="text-align: center; color: #6b7280;">Made with ❤️ using Streamlit & Google Gemini</p>',
-        unsafe_allow_html=True
-    )
-
+st.markdown(
+    """
+    <div style="text-align: center; color: #94a3b8; padding: 2rem;">
+        <p>Built with Streamlit & Google Gemini</p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)

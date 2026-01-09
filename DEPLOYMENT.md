@@ -26,8 +26,10 @@ git push -u origin main
 1. Go to: `https://github.com/YOUR_USERNAME/AI-Code-Reviewer/settings/secrets/actions`
 2. Click "New repository secret"
 3. Name: `GEMINI_API_KEY`
-4. Value: `AIzaSyDrdf_bTfsJ57DBsgSWzUXzcL-qfDTFPCk`
+4. Value: `YOUR_API_KEY_HERE` (Get your free key from https://aistudio.google.com/app/apikey)
 5. Click "Add secret"
+
+⚠️ **IMPORTANT**: Never commit your API key to the repository! Always use GitHub Secrets.
 
 ## Test the Deployment
 
