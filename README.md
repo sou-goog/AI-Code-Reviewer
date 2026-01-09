@@ -38,6 +38,7 @@ Check out [PR #1](https://github.com/sou-goog/AI-Code-Reviewer/pull/1) to see th
 - [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines
 - [SECURITY.md](SECURITY.md) - Security policy
 - [EXAMPLE_REVIEW.md](EXAMPLE_REVIEW.md) - Sample output
+- [BRANCH_PROTECTION.md](BRANCH_PROTECTION.md) - 🔒 Protect your main branch
 
 ## ✨ Features
 

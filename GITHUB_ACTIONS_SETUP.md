@@ -34,6 +34,19 @@ git push -u origin main
 ### 3. Enable Workflow
 The workflow file is already in `.github/workflows/code-review.yml`. GitHub will automatically detect it.
 
+### 3.5. Protect Your Main Branch (Recommended)
+Protect your `main` branch to require pull requests and prevent accidental force pushes:
+
+1. Go to **Settings** → **Branches**
+2. Click **Add rule** for branch `main`
+3. Enable:
+   - ✅ Require a pull request before merging
+   - ✅ Require status checks to pass
+   - ❌ Do NOT allow force pushes
+   - ❌ Do NOT allow deletions
+
+📖 See [BRANCH_PROTECTION.md](BRANCH_PROTECTION.md) for detailed instructions.
+
 ### 4. Test It
 1. Create a new branch: `git checkout -b test-feature`
 2. Make some code changes
