@@ -14,7 +14,8 @@ class ReviewDatabase:
     
     def _init_database(self):
         """Initialize database schema."""
-        with sqlite3.connect(self.db_path) as conn:
+        conn = sqlite3.connect(self.db_path)
+        try:
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS reviews (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,10 +43,13 @@ class ReviewDatabase:
             """)
             
             conn.commit()
+        finally:
+            conn.close()
     
     def save_review(self, review_data: Dict) -> int:
         """Save a review to the database."""
-        with sqlite3.connect(self.db_path) as conn:
+        conn = sqlite3.connect(self.db_path)
+        try:
             cursor = conn.execute("""
                 INSERT INTO reviews (
                     diff_type, file_count, critical_count, 
@@ -62,16 +66,22 @@ class ReviewDatabase:
             ))
             conn.commit()
             return cursor.lastrowid
+        finally:
+            conn.close()
     
     def get_total_reviews(self) -> int:
         """Get total number of reviews."""
-        with sqlite3.connect(self.db_path) as conn:
+        conn = sqlite3.connect(self.db_path)
+        try:
             cursor = conn.execute("SELECT COUNT(*) FROM reviews")
             return cursor.fetchone()[0]
+        finally:
+            conn.close()
     
     def get_total_issues(self) -> Dict[str, int]:
         """Get total issues by severity."""
-        with sqlite3.connect(self.db_path) as conn:
+        conn = sqlite3.connect(self.db_path)
+        try:
             cursor = conn.execute("""
                 SELECT 
                     SUM(critical_count) as critical,
@@ -85,10 +95,13 @@ class ReviewDatabase:
                 'warning': row[1] or 0,
                 'suggestion': row[2] or 0
             }
+        finally:
+            conn.close()
     
     def get_recent_reviews(self, limit: int = 10) -> List[Dict]:
         """Get recent reviews."""
-        with sqlite3.connect(self.db_path) as conn:
+        conn = sqlite3.connect(self.db_path)
+        try:
             conn.row_factory = sqlite3.Row
             cursor = conn.execute("""
                 SELECT * FROM reviews 
@@ -96,6 +109,8 @@ class ReviewDatabase:
                 LIMIT ?
             """, (limit,))
             return [dict(row) for row in cursor.fetchall()]
+        finally:
+            conn.close()
     
     def get_review_stats(self) -> Dict:
         """Get comprehensive review statistics."""
@@ -108,7 +123,10 @@ class ReviewDatabase:
     
     def _get_avg_duration(self) -> float:
         """Get average review duration."""
-        with sqlite3.connect(self.db_path) as conn:
+        conn = sqlite3.connect(self.db_path)
+        try:
             cursor = conn.execute("SELECT AVG(duration_seconds) FROM reviews")
             result = cursor.fetchone()[0]
             return round(result, 2) if result else 0.0
+        finally:
+            conn.close()

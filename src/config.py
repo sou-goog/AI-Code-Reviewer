@@ -1,8 +1,11 @@
+import logging
 import os
 import re
 from typing import Dict, List, Optional
 
 import yaml
+
+logger = logging.getLogger(__name__)
 
 
 class ConfigManager:
@@ -18,11 +21,17 @@ class ConfigManager:
             return self._default_config()
         
         try:
-            with open(self.config_path, 'r') as f:
+            with open(self.config_path, 'r', encoding='utf-8') as f:
                 config = yaml.safe_load(f)
                 return config or self._default_config()
+        except FileNotFoundError:
+            logger.debug(f"Config file not found: {self.config_path}, using defaults")
+            return self._default_config()
+        except yaml.YAMLError as e:
+            logger.warning(f"Could not parse YAML config {self.config_path}: {e}")
+            return self._default_config()
         except Exception as e:
-            print(f"Warning: Could not load {self.config_path}: {e}")
+            logger.warning(f"Could not load {self.config_path}: {e}")
             return self._default_config()
     
     def _default_config(self) -> Dict:
@@ -31,7 +40,13 @@ class ConfigManager:
             'review': {
                 'levels': 'all',
                 'max_diff_size': 100,
-                'ignore_patterns': [],
+                'ignore_patterns': [
+                    '**/node_modules/**',
+                    '**/venv/**',
+                    '**/__pycache__/**',
+                    '*.min.js',
+                    '*.min.css'
+                ],
                 'include_patterns': []
             },
             'model': {
@@ -47,7 +62,11 @@ class ConfigManager:
     
     def get_model_name(self) -> str:
         """Get AI model name."""
-        return self.config.get('model', {}).get('name', 'gemini-2.5-flash')
+        # Support both old format (direct 'model' key) and new format (nested 'model.name')
+        if 'model' in self.config and isinstance(self.config['model'], dict):
+            return self.config['model'].get('name', 'gemini-2.5-flash')
+        # Fallback for direct model name
+        return self.config.get('model', 'gemini-2.5-flash')
     
     def get_ignore_patterns(self) -> List[str]:
         """Get file patterns to ignore."""

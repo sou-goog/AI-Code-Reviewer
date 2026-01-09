@@ -11,7 +11,11 @@ def test_config_manager_default():
         
         assert config.get_model_name() == 'gemini-2.5-flash'
         assert config.get_custom_rules() == []
-        assert config.get_ignore_patterns() == []
+        # Default config now includes common ignore patterns
+        ignore_patterns = config.get_ignore_patterns()
+        assert len(ignore_patterns) > 0
+        assert '**/node_modules/**' in ignore_patterns
+        assert '**/__pycache__/**' in ignore_patterns
 
 def test_custom_rules_engine():
     """Test custom rules engine."""
