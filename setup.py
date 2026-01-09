@@ -12,7 +12,7 @@ setup(
     name="ai-code-reviewer",
     version="1.0.0",
     author="Sougata",
-    description="AI-powered automated code review tool using Google Gemini",
+    description="Enterprise-grade AI-powered code review tool using Google Gemini",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/sou-goog/AI-Code-Reviewer",
