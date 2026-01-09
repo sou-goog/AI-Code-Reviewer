@@ -1,6 +1,8 @@
+<div align="center">
+
 # 🤖 AI Code Reviewer
 
-![Banner](banner.png)
+**Enterprise-grade AI-powered code review tool using Google Gemini**
 
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -8,8 +10,16 @@
 [![Powered by Gemini](https://img.shields.io/badge/Powered%20by-Google%20Gemini-4285F4?logo=google)](https://ai.google.dev/)
 [![Test Coverage](https://img.shields.io/badge/coverage-73%25-green)](https://github.com/sou-goog/AI-Code-Reviewer)
 [![Tests](https://img.shields.io/badge/tests-44%20passing-brightgreen)](https://github.com/sou-goog/AI-Code-Reviewer)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/sou-goog/AI-Code-Reviewer)
 
-**Enterprise-grade AI-powered code review tool using Google Gemini.** Automatically analyzes code changes, provides intelligent feedback, and integrates seamlessly with your development workflow. Catch bugs, security issues, and style problems before you commit. **100% Free!**
+**Automatically analyzes code changes, provides intelligent feedback, and integrates seamlessly with your development workflow.**  
+**Catch bugs, security issues, and style problems before you commit. 100% Free!**
+
+[🚀 Quick Start](#-quick-start) • [📖 Documentation](#-documentation) • [💡 Features](#-features) • [🤝 Contributing](#-contributing)
+
+---
+
+</div>
 
 > **Status**: ✅ Production-ready v1.0.0 | All tests passing | 73% code coverage | Windows/Linux/macOS compatible
 
