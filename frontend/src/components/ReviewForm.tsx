@@ -73,7 +73,7 @@ export default function ReviewForm({ onSubmit, loading }: ReviewFormProps) {
                 <button
                     type="submit"
                     disabled={loading || !code.trim()}
-                    className="px-8 py-3 bg-gradient-to-r from-primary to-blue-500 text-white font-semibold rounded-xl glow-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="px-8 py-3 bg-primary text-white font-semibold rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 hover:opacity-90"
                 >
                     {loading ? (
                         <>

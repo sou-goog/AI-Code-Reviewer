@@ -91,7 +91,7 @@ export default function Home() {
                     <div className="grid lg:grid-cols-2 gap-8">
                         <div className="space-y-4">
                             <h2 className="font-display text-2xl font-semibold text-foreground flex items-center gap-2">
-                                <Sparkles className="w-6 h-6 text-primary" />
+                                <Sparkles className="w-5 h-5 text-primary -scale-x-100" />
                                 Submit Code for Review
                             </h2>
                             <ReviewForm onSubmit={handleSubmit} loading={loading} />
