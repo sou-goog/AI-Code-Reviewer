@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --background: 222 47% 6%;
+    --foreground: 210 40% 98%;
+    --primary: 263 70% 58%;
+    --muted-foreground: 215 20% 65%;
+    --border: 217 33% 17%;
+    --card: 222 47% 8%;
+}
+
+.dark {
+    --background: 222 47% 6%;
+    --foreground: 210 40% 98%;
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground font-[Inter];
+        font-family: 'Inter', sans-serif;
+    }
+}
+
+@layer utilities {
+    .font-display {
+        font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .font-mono {
+        font-family: 'JetBrains Mono', monospace;
+    }
+
+    .text-gradient {
+        background: linear-gradient(135deg, hsl(263 70% 58%) 0%, hsl(199 89% 48%) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .glass {
+        background: rgba(30, 41, 59, 0.6);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .glow-primary {
+        box-shadow: 0 0 40px -10px hsl(263 70% 58% / 0.5);
+    }
+
+    .glow-critical {
+        box-shadow: 0 0 20px -5px hsl(0 84% 60% / 0.3);
+    }
+
+    .glow-warning {
+        box-shadow: 0 0 20px -5px hsl(38 92% 50% / 0.3);
+    }
+
+    .glow-success {
+        box-shadow: 0 0 20px -5px hsl(160 84% 39% / 0.3);
+    }
+
+    .glow-info {
+        box-shadow: 0 0 20px -5px hsl(199 89% 48% / 0.3);
+    }
+
+    .bg-grid {
+        background-image:
+            linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+    }
+
+    .bg-gradient-radial {
+        background: radial-gradient(ellipse at top, hsl(263 70% 58% / 0.15) 0%, transparent 50%);
+    }
+}
