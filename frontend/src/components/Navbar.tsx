@@ -15,9 +15,9 @@ export default function Navbar() {
             <div className="max-w-6xl mx-auto px-6 py-4">
                 <div className="flex items-center justify-between">
                     <Link href="/">
-                        <div className="flex items-center gap-3 cursor-pointer group">
+                        <div className="flex items-center gap-3 cursor-pointer">
                             <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center">
-                                <Sparkles className="w-5 h-5 text-white" />
+                                <Sparkles className="w-5 h-5 text-white -scale-x-100" strokeWidth={2} />
                             </div>
                             <span className="font-display text-xl font-semibold text-foreground">
                                 AI Code Reviewer
