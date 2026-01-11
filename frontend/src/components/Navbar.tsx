@@ -16,11 +16,8 @@ export default function Navbar() {
                 <div className="flex items-center justify-between">
                     <Link href="/">
                         <div className="flex items-center gap-3 cursor-pointer group">
-                            <div className="relative">
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-blue-500 flex items-center justify-center group-hover:shadow-[0_0_20px_rgba(139,92,246,0.5)] transition-shadow duration-300">
-                                    <Sparkles className="w-5 h-5 text-white" />
-                                </div>
-                                <div className="absolute inset-0 w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-blue-500 blur-lg opacity-50 group-hover:opacity-75 transition-opacity -z-10" />
+                            <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center">
+                                <Sparkles className="w-5 h-5 text-white" />
                             </div>
                             <span className="font-display text-xl font-semibold text-foreground">
                                 AI Code Reviewer
