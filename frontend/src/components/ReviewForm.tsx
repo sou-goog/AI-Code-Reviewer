@@ -1,12 +1,9 @@
 import { useState } from "react";
 import { Send, Code } from "lucide-react";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-
 interface ReviewFormProps {
-    onSubmit: (review: any) => void;
+    onSubmit: (code: string, language: string) => void;
     loading: boolean;
-    setLoading: (loading: boolean) => void;
 }
 
 const sampleCode = `def authenticate_user(username, password):
@@ -17,38 +14,14 @@ const sampleCode = `def authenticate_user(username, password):
     if user.password == password:
         return create_token(user)`;
 
-export default function ReviewForm({ onSubmit, loading, setLoading }: ReviewFormProps) {
+export default function ReviewForm({ onSubmit, loading }: ReviewFormProps) {
     const [code, setCode] = useState("");
     const [language, setLanguage] = useState("python");
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!code.trim()) return;
-
-        setLoading(true);
-
-        try {
-            const response = await fetch(`${API_URL}/api/review`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    code_diff: code,
-                    language
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error(`API error: ${response.status}`);
-            }
-
-            const data = await response.json();
-            onSubmit(data);
-        } catch (error: any) {
-            console.error('Review failed:', error);
-            alert(`Failed to review code: ${error.message}`);
-        } finally {
-            setLoading(false);
-        }
+        onSubmit(code, language);
     };
 
     const handleLoadSample = () => {
@@ -63,7 +36,7 @@ export default function ReviewForm({ onSubmit, loading, setLoading }: ReviewForm
                     <select
                         value={language}
                         onChange={(e) => setLanguage(e.target.value)}
-                        className="w-40 bg-card border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="w-40 h-10 bg-card border border-border rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                         <option value="python">Python</option>
                         <option value="javascript">JavaScript</option>
@@ -76,7 +49,7 @@ export default function ReviewForm({ onSubmit, loading, setLoading }: ReviewForm
                 <button
                     type="button"
                     onClick={handleLoadSample}
-                    className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-2"
+                    className="h-10 px-4 text-sm text-muted-foreground hover:text-foreground flex items-center gap-2 rounded-lg hover:bg-white/5 transition-colors"
                 >
                     <Code className="w-4 h-4" />
                     Load Sample
@@ -95,7 +68,7 @@ export default function ReviewForm({ onSubmit, loading, setLoading }: ReviewForm
 
             <div className="flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">
-                    {code.length > 0 ? `${code.split('\\n').length} lines` : "No code entered"}
+                    {code.length > 0 ? `${code.split('\n').length} lines` : "No code entered"}
                 </p>
                 <button
                     type="submit"
