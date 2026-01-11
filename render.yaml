@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: ai-code-reviewer-api
+    env: python
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: cd api && pip install -r requirements.txt
+    startCommand: cd api && python main.py
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+    healthCheckPath: /api/health
