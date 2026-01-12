@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Send, Code } from "lucide-react";
 
+const API_URL = "https://ai-code-reviewer-ea6x.onrender.com";
+
 interface ReviewFormProps {
-    onSubmit: (code: string, language: string) => void;
-    loading: boolean;
+  onSubmit: (code: string, language: string) => void;
+  loading: boolean;
 }
 
 const sampleCode = `def authenticate_user(username, password):

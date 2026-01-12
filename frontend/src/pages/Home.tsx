@@ -27,6 +27,8 @@ const mockReview = {
     summary: "This diff shows security improvements to the authentication flow. The switch to hashed password comparison and addition of logging are positive changes. However, there are critical security issues in the token validation that should be addressed before merging.",
 };
 
+const API_URL = "https://ai-code-reviewer-ea6x.onrender.com";
+
 export default function Home() {
     const [loading, setLoading] = useState(false);
     const [review, setReview] = useState<typeof mockReview | null>(null);
@@ -35,10 +37,29 @@ export default function Home() {
         setLoading(true);
         setReview(null);
 
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        try {
+            const response = await fetch(`${API_URL}/api/review`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code_diff: code,
+                    language
+                })
+            });
 
-        setReview(mockReview);
-        setLoading(false);
+            if (!response.ok) {
+                throw new Error(`API error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setReview(data);
+        } catch (error: any) {
+            console.error('Review failed:', error);
+            // Fallback to mock data if API fails
+            setReview(mockReview);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
