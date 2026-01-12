@@ -1,6 +1,6 @@
 """
 FastAPI backend for AI Code Reviewer frontend.
-Provides REST API for code review functionality.
+Provides REST API for code review functionality with GitHub integration.
 """
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,10 +15,13 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.llm_client import analyze_code_diff
 
+# Import GitHub auth router
+from github_auth import router as github_auth_router
+
 app = FastAPI(
     title="AI Code Reviewer API",
-    version="1.0.0",
-    description="AI-powered code review backend"
+    version="2.0.0",
+    description="AI-powered code review backend with GitHub integration"
 )
 
 # CORS for local development
@@ -29,6 +32,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include GitHub auth router
+app.include_router(github_auth_router)
 
 # Request models
 class ReviewRequest(BaseModel):
