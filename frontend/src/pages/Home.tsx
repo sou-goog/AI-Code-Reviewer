@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import ReviewForm from "@/components/ReviewForm";
 import ReviewResult from "@/components/ReviewResult";
-import { Sparkles, Zap, Shield, Code2, Check, X, Star, Users, Activity, Clock } from "lucide-react";
+import { Sparkles, Zap, Shield, Code2, Github } from "lucide-react";
 
 const API_URL = "https://ai-code-reviewer-ea6x.onrender.com";
 
@@ -56,7 +56,6 @@ export default function Home() {
             setReview(data);
         } catch (error: any) {
             console.error('Review failed:', error);
-            // Fallback to mock data if API fails
             setReview(mockReview);
         } finally {
             setLoading(false);
@@ -71,291 +70,124 @@ export default function Home() {
             <Navbar />
 
             {!showReviewer ? (
-                <>
-                    {/* Hero Section */}
-                    <section className="relative pt-32 pb-20 px-6">
-                        <div className="max-w-6xl mx-auto text-center">
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.6 }}
-                            >
-                                <h1 className="font-display text-5xl md:text-7xl font-bold mb-6 leading-tight">
-                                    <span className="text-gradient">Free</span> AI Code Reviews
-                                    <br />
-                                    That Actually Catch Bugs
-                                </h1>
+                <main className="relative pt-32 pb-20 px-6">
+                    <div className="max-w-5xl mx-auto">
+                        {/* Hero Section */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="text-center mb-16"
+                        >
+                            <h1 className="font-display text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                                <span className="text-gradient">AI Code Reviewer</span>
+                            </h1>
 
-                                <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-8">
-                                    Stop paying $49/month for CodeRabbit. Get enterprise-grade code reviews powered by Google Gemini - completely free, forever.
-                                </p>
+                            <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
+                                Get AI-powered code reviews using Google Gemini. Catches bugs, security issues, and suggests improvements.
+                            </p>
 
-                                <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-                                    <button
-                                        onClick={() => setShowReviewer(true)}
-                                        className="px-8 py-4 bg-primary text-white font-semibold rounded-2xl transition-all hover:opacity-90 hover:scale-105 flex items-center gap-2 justify-center"
-                                    >
-                                        <Sparkles className="w-5 h-5" />
-                                        Try It Free Now
-                                    </button>
-                                    <a
-                                        href="https://github.com/sou-goog/AI-Code-Reviewer"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="px-8 py-4 bg-white/10 text-foreground font-semibold rounded-2xl transition-all hover:bg-white/20 flex items-center gap-2 justify-center border border-border"
-                                    >
-                                        <Star className="w-5 h-5" />
-                                        View on GitHub
-                                    </a>
-                                </div>
-
-                                <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
-                                    <div className="flex items-center gap-2">
-                                        <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                                        <span><strong>1.2k+</strong> GitHub stars</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <Users className="w-4 h-4 text-primary" />
-                                        <span><strong>500+</strong> projects using</span>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        </div>
-                    </section>
-
-                    {/* Problem/Solution Section */}
-                    <section className="relative py-20 px-6">
-                        <div className="max-w-6xl mx-auto">
-                            <div className="grid md:grid-cols-2 gap-8">
-                                <motion.div
-                                    initial={{ opacity: 0, x: -20 }}
-                                    whileInView={{ opacity: 1, x: 0 }}
-                                    viewport={{ once: true }}
-                                    className="glass rounded-2xl p-8"
-                                >
-                                    <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
-                                        <span className="text-4xl">😩</span>
-                                        The Problem
-                                    </h2>
-                                    <ul className="space-y-4">
-                                        <li className="flex items-start gap-3">
-                                            <X className="w-5 h-5 text-red-400 flex-shrink-0 mt-1" />
-                                            <span>CodeRabbit costs <strong>$49/month</strong> per user</span>
-                                        </li>
-                                        <li className="flex items-start gap-3">
-                                            <X className="w-5 h-5 text-red-400 flex-shrink-0 mt-1" />
-                                            <span>SonarQube requires complex Java setup</span>
-                                        </li>
-                                        <li className="flex items-start gap-3">
-                                            <X className="w-5 h-5 text-red-400 flex-shrink-0 mt-1" />
-                                            <span>Manual reviews take <strong>2+ hours</strong> per PR</span>
-                                        </li>
-                                        <li className="flex items-start gap-3">
-                                            <X className="w-5 h-5 text-red-400 flex-shrink-0 mt-1" />
-                                            <span>Bugs slip through to production</span>
-                                        </li>
-                                    </ul>
-                                </motion.div>
-
-                                <motion.div
-                                    initial={{ opacity: 0, x: 20 }}
-                                    whileInView={{ opacity: 1, x: 0 }}
-                                    viewport={{ once: true }}
-                                    className="glass rounded-2xl p-8 border-2 border-primary/50"
-                                >
-                                    <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
-                                        <span className="text-4xl">✨</span>
-                                        The Solution
-                                    </h2>
-                                    <ul className="space-y-4">
-                                        <li className="flex items-start gap-3">
-                                            <Check className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-1" />
-                                            <span><strong>100% free</strong>, no credit card ever</span>
-                                        </li>
-                                        <li className="flex items-start gap-3">
-                                            <Check className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-1" />
-                                            <span><strong>pip install</strong> in 30 seconds</span>
-                                        </li>
-                                        <li className="flex items-start gap-3">
-                                            <Check className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-1" />
-                                            <span>Reviews in under <strong>5 seconds</strong></span>
-                                        </li>
-                                        <li className="flex items-start gap-3">
-                                            <Check className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-1" />
-                                            <span>Catches bugs before merge</span>
-                                        </li>
-                                    </ul>
-                                </motion.div>
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* Comparison Table */}
-                    <section className="relative py-20 px-6">
-                        <div className="max-w-6xl mx-auto">
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                className="text-center mb-12"
-                            >
-                                <h2 className="text-4xl font-bold mb-4">Why Developers Choose Us</h2>
-                                <p className="text-xl text-muted-foreground">See how we stack up against the competition</p>
-                            </motion.div>
-
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                className="glass rounded-2xl overflow-hidden"
-                            >
-                                <div className="overflow-x-auto">
-                                    <table className="w-full">
-                                        <thead className="bg-white/5">
-                                            <tr>
-                                                <th className="text-left p-4 font-semibold">Feature</th>
-                                                <th className="p-4 font-semibold text-primary">AI Code Reviewer</th>
-                                                <th className="p-4 font-semibold">CodeRabbit</th>
-                                                <th className="p-4 font-semibold">SonarQube</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-border">
-                                            <tr className="hover:bg-white/5 transition-colors">
-                                                <td className="p-4 font-medium">Price</td>
-                                                <td className="p-4 text-center">
-                                                    <span className="text-emerald-400 font-bold text-lg">$0 forever</span>
-                                                </td>
-                                                <td className="p-4 text-center text-muted-foreground">$49/mo</td>
-                                                <td className="p-4 text-center text-muted-foreground">$150/mo</td>
-                                            </tr>
-                                            <tr className="hover:bg-white/5 transition-colors">
-                                                <td className="p-4 font-medium">Setup Time</td>
-                                                <td className="p-4 text-center">
-                                                    <span className="text-emerald-400 font-semibold">30 seconds</span>
-                                                </td>
-                                                <td className="p-4 text-center text-muted-foreground">5 minutes</td>
-                                                <td className="p-4 text-center text-muted-foreground">2+ hours</td>
-                                            </tr>
-                                            <tr className="hover:bg-white/5 transition-colors">
-                                                <td className="p-4 font-medium">Inline PR Comments</td>
-                                                <td className="p-4 text-center"><Check className="w-5 h-5 text-emerald-400 mx-auto" /></td>
-                                                <td className="p-4 text-center"><Check className="w-5 h-5 text-emerald-400 mx-auto" /></td>
-                                                <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
-                                            </tr>
-                                            <tr className="hover:bg-white/5 transition-colors">
-                                                <td className="p-4 font-medium">CLI Tool</td>
-                                                <td className="p-4 text-center"><Check className="w-5 h-5 text-emerald-400 mx-auto" /></td>
-                                                <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
-                                                <td className="p-4 text-center"><Check className="w-5 h-5 text-emerald-400 mx-auto" /></td>
-                                            </tr>
-                                            <tr className="hover:bg-white/5 transition-colors">
-                                                <td className="p-4 font-medium">Open Source</td>
-                                                <td className="p-4 text-center"><Check className="w-5 h-5 text-emerald-400 mx-auto" /></td>
-                                                <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
-                                                <td className="p-4 text-center text-muted-foreground text-sm">Community only</td>
-                                            </tr>
-                                            <tr className="hover:bg-white/5 transition-colors">
-                                                <td className="p-4 font-medium">Custom Rules</td>
-                                                <td className="p-4 text-center"><Check className="w-5 h-5 text-emerald-400 mx-auto" /></td>
-                                                <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
-                                                <td className="p-4 text-center"><Check className="w-5 h-5 text-emerald-400 mx-auto" /></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </motion.div>
-                        </div>
-                    </section>
-
-                    {/* Trust Signals */}
-                    <section className="relative py-20 px-6">
-                        <div className="max-w-6xl mx-auto">
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                className="text-center mb-12"
-                            >
-                                <h2 className="text-4xl font-bold mb-4">Built for Production</h2>
-                                <p className="text-xl text-muted-foreground">Trusted by developers worldwide</p>
-                            </motion.div>
-
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-                                {[
-                                    { number: "1.2k+", label: "GitHub Stars", icon: Star },
-                                    { number: "500+", label: "Projects Using", icon: Users },
-                                    { number: "10k+", label: "Reviews Completed", icon: Activity },
-                                    { number: "4.2s", label: "Avg Review Time", icon: Clock },
-                                ].map((metric, i) => (
-                                    <motion.div
-                                        key={metric.label}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: i * 0.1 }}
-                                        className="glass rounded-xl p-6 text-center"
-                                    >
-                                        <metric.icon className="w-8 h-8 text-primary mx-auto mb-3" />
-                                        <div className="text-3xl font-bold text-gradient mb-2">{metric.number}</div>
-                                        <div className="text-sm text-muted-foreground">{metric.label}</div>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* Features Grid */}
-                    <section className="relative py-20 px-6">
-                        <div className="max-w-6xl mx-auto">
-                            <div className="grid md:grid-cols-3 gap-6">
-                                {[
-                                    { icon: Zap, title: "Instant Analysis", desc: "Get feedback in seconds, not hours" },
-                                    { icon: Shield, title: "Security Focus", desc: "Catch vulnerabilities before they ship" },
-                                    { icon: Code2, title: "Multi-Language", desc: "Python, JS, TypeScript, Go, Rust & more" },
-                                ].map((feature, i) => (
-                                    <motion.div
-                                        key={feature.title}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: i * 0.1 }}
-                                        className="glass rounded-xl p-6"
-                                    >
-                                        <div className="p-3 rounded-lg bg-primary/20 w-fit mb-4">
-                                            <feature.icon className="w-6 h-6 text-primary" />
-                                        </div>
-                                        <h3 className="font-semibold text-xl mb-2">{feature.title}</h3>
-                                        <p className="text-muted-foreground">{feature.desc}</p>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* Final CTA */}
-                    <section className="relative py-20 px-6">
-                        <div className="max-w-4xl mx-auto text-center">
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                className="glass rounded-2xl p-12"
-                            >
-                                <h2 className="text-4xl font-bold mb-4">Ready to Stop Paying for Code Reviews?</h2>
-                                <p className="text-xl text-muted-foreground mb-8">
-                                    Join 500+ projects using AI-powered reviews. Free forever.
-                                </p>
+                            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
                                 <button
                                     onClick={() => setShowReviewer(true)}
-                                    className="px-10 py-5 bg-primary text-white font-semibold rounded-2xl transition-all hover:opacity-90 hover:scale-105 flex items-center gap-3 justify-center mx-auto text-lg"
+                                    className="px-8 py-4 bg-primary text-white font-semibold rounded-2xl transition-all hover:opacity-90 flex items-center gap-2 justify-center"
                                 >
-                                    <Sparkles className="w-6 h-6" />
-                                    Try It Free - No Signup Required
+                                    <Sparkles className="w-5 h-5" />
+                                    Try It Now
                                 </button>
-                            </motion.div>
-                        </div>
-                    </section>
-                </>
+                                <a
+                                    href="https://github.com/sou-goog/AI-Code-Reviewer"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="px-8 py-4 bg-white/10 text-foreground font-semibold rounded-2xl transition-all hover:bg-white/20 flex items-center gap-2 justify-center border border-border"
+                                >
+                                    <Github className="w-5 h-5" />
+                                    View on GitHub
+                                </a>
+                            </div>
+                        </motion.div>
+
+                        {/* Features */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="grid md:grid-cols-3 gap-6 mb-16"
+                        >
+                            {[
+                                { icon: Zap, title: "Instant Analysis", desc: "Get feedback in seconds" },
+                                { icon: Shield, title: "Security Focus", desc: "Catch vulnerabilities early" },
+                                { icon: Code2, title: "Multi-Language", desc: "Python, JS, Go & more" },
+                            ].map((feature, i) => (
+                                <div
+                                    key={feature.title}
+                                    className="glass rounded-xl p-6 text-center"
+                                >
+                                    <div className="p-3 rounded-lg bg-primary/20 w-fit mx-auto mb-4">
+                                        <feature.icon className="w-6 h-6 text-primary" />
+                                    </div>
+                                    <h3 className="font-semibold text-lg mb-2">{feature.title}</h3>
+                                    <p className="text-sm text-muted-foreground">{feature.desc}</p>
+                                </div>
+                            ))}
+                        </motion.div>
+
+                        {/* How it Works */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 }}
+                            className="glass rounded-2xl p-8 mb-16"
+                        >
+                            <h2 className="text-3xl font-bold mb-6 text-center">How It Works</h2>
+                            <div className="space-y-4 max-w-2xl mx-auto">
+                                <div className="flex items-start gap-4">
+                                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
+                                        <span className="text-primary font-bold">1</span>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold mb-1">Paste Your Code</h3>
+                                        <p className="text-muted-foreground">Submit code snippets or diffs for review</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-4">
+                                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
+                                        <span className="text-primary font-bold">2</span>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold mb-1">AI Analysis</h3>
+                                        <p className="text-muted-foreground">Google Gemini reviews your code for issues</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-4">
+                                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
+                                        <span className="text-primary font-bold">3</span>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold mb-1">Get Feedback</h3>
+                                        <p className="text-muted-foreground">Receive categorized suggestions and improvements</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        {/* Final CTA */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4 }}
+                            className="text-center"
+                        >
+                            <button
+                                onClick={() => setShowReviewer(true)}
+                                className="px-10 py-5 bg-primary text-white font-semibold rounded-2xl transition-all hover:opacity-90 hover:scale-105 inline-flex items-center gap-3 text-lg"
+                            >
+                                <Sparkles className="w-6 h-6" />
+                                Get Started
+                            </button>
+                            <p className="text-sm text-muted-foreground mt-4">Free to use • No signup required</p>
+                        </motion.div>
+                    </div>
+                </main>
             ) : (
                 <main className="relative pt-28 pb-20 px-6">
                     <div className="max-w-6xl mx-auto">
@@ -367,7 +199,7 @@ export default function Home() {
                                 onClick={() => setShowReviewer(false)}
                                 className="text-muted-foreground hover:text-foreground transition-colors"
                             >
-                                ← Back to Home
+                                ← Back
                             </button>
                         </div>
 
