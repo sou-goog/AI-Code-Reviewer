@@ -15,8 +15,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.llm_client import analyze_code_diff
 
-# Import GitHub auth router
+# Import GitHub routers
 from github_auth import router as github_auth_router
+from github_webhook import router as github_webhook_router
+from repo_settings import router as repo_settings_router
 
 app = FastAPI(
     title="AI Code Reviewer API",
@@ -33,8 +35,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include GitHub auth router
+# Include routers
 app.include_router(github_auth_router)
+app.include_router(github_webhook_router)
+app.include_router(repo_settings_router)
 
 # Request models
 class ReviewRequest(BaseModel):
