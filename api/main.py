@@ -1,19 +1,18 @@
 """
 FastAPI backend for AI Code Reviewer frontend.
-Wraps existing review functionality with REST API.
+Provides REST API for code review functionality.
 """
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 import sys
+import os
 from pathlib import Path
 
-# Add src to path
+# Add src to path for LLM client
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.reviewer import run_review
-from src.database import ReviewDatabase
 from src.llm_client import analyze_code_diff
 
 app = FastAPI(
