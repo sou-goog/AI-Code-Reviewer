@@ -77,26 +77,42 @@ async def create_review(request: ReviewRequest):
         return parsed
     except Exception as e:
         logger.error(f"Review failed: {str(e)}")
-        logger.error(traceback.format_exc())
-        raise HTTPException(status_code=500, detail=f"Review failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/stats")
-async def get_statistics():
-    """
-    Get review statistics from database.
-    """
+async def get_stats():
+    """Get review statistics"""
+    from src.database import get_review_stats
+    
     try:
-        db = ReviewDatabase()
-        stats = db.get_review_stats()
-        recent = db.get_recent_reviews(10)
-        
-        return {
-            "success": True,
-            "stats": stats,
-            "recent_reviews": recent
+        stats = get_review_stats()
+        return stats or {
+            "total_reviews": 0,
+            "total_critical": 0,
+            "total_warnings": 0,
+            "total_suggestions": 0,
+            "avg_duration": 0
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        # Return default stats if DB not configured
+        return {
+            "total_reviews": 0,
+            "total_critical": 0,
+            "total_warnings": 0,
+            "total_suggestions": 0,
+            "avg_duration": 0
+        }
+
+@app.get("/api/reviews")
+async def list_reviews():
+    """Get all reviews"""
+    from src.database import get_all_reviews
+    
+    try:
+        reviews = get_all_reviews()
+        return reviews or []
+    except Exception as e:
+        return []
 
 @app.get("/api/health")
 async def health_check():
