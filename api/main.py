@@ -1,3 +1,7 @@
+# Load environment variables from .env file
+from dotenv import load_dotenv
+load_dotenv()
+
 """
 FastAPI backend for AI Code Reviewer frontend.
 Provides REST API for code review functionality with GitHub integration.
