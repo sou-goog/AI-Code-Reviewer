@@ -32,7 +32,7 @@ We will use **Render** to host the FastAPI backend for free.
     - **Branch**: `main`
     - **Runtime**: `Python 3`
     - **Build Command**: `pip install -r api/requirements.txt`
-    - **Start Command**: `cd api && uvicorn main:app --host 0.0.0.0 --port $PORT`
+    - **Start Command**: `cd api && python -m uvicorn main:app --host 0.0.0.0 --port $PORT`
     - **Instance Type**: Free
 4.  **Environment Variables**:
     - Scroll down to "Environment Variables".
