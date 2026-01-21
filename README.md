@@ -15,11 +15,17 @@
 ## 🚀 Quick Start
 
 ### Live App
+
 Visit: [Your Netlify URL here]
+
+### 📚 Deployment
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for step-by-step instructions to deploy to Render and Netlify.
 
 ### Local Development
 
 **Backend:**
+
 ```bash
 $env:GEMINI_API_KEY = "your_key"
 cd api
@@ -27,6 +33,7 @@ python main.py
 ```
 
 **Frontend:**
+
 ```bash
 cd frontend
 npm install
