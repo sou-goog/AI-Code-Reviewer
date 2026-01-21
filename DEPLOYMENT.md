@@ -44,9 +44,29 @@ We will use **Render** to host the FastAPI backend for free.
 
 ---
 
-## 🎨 Frontend Deployment (Netlify)
+---
 
-We will use **Netlify** to host the React frontend.
+## 🎨 Frontend Deployment
+
+You can choose either **Vercel** or **Netlify**. Both are supported.
+
+### Option A: Vercel (Recommended)
+
+1.  **Create Account**: Sign up at [vercel.com](https://vercel.com/).
+2.  **Add New Project**:
+    - Click **"Add New..."** -> **"Project"**.
+    - Import your GitHub repository.
+3.  **Configure Project**:
+    - Vercel should auto-detect the Vite settings.
+    - **Framework Preset**: Vite
+    - **Root Directory**: `frontend` (Edit this if it's not automatically selected).
+4.  **Environment Variables**:
+    - Expand **"Environment Variables"**.
+    - Key: `VITE_API_URL`
+    - Value: Your Render Backend URL (e.g., `https://ai-code-reviewer-api.onrender.com`) - **No trailing slash**.
+5.  **Deploy**: Click **"Deploy"**.
+
+### Option B: Netlify
 
 1.  **Create Account**: Sign up at [netlify.com](https://www.netlify.com/).
 2.  **New Site**:
@@ -57,9 +77,9 @@ We will use **Netlify** to host the React frontend.
     - **Build command**: `npm run build`
     - **Publish directory**: `frontend/dist`
 4.  **Environment Variables**:
-    - Click **"Show advanced"** or go to **"Site configuration" > "Environment variables"** after creation.
-    - Add Key: `VITE_API_URL`
-    - Add Value: Your Render Backend URL (e.g., `https://ai-code-reviewer-api.onrender.com`) - **IMPORTANT**: No trailing slash `/`.
+    - Click **"Show advanced"** or go to **"Site configuration" > "Environment variables"**.
+    - Key: `VITE_API_URL`
+    - Value: Your Render Backend URL.
 5.  **Deploy**: Click **"Deploy site"**.
 
 ---
