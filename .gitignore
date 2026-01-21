@@ -20,6 +20,11 @@ wheels/
 .installed.cfg
 *.egg
 
+# Dependencies
+node_modules/
+frontend/node_modules/
+api/venv/
+
 # Virtual environments
 venv/
 env/
